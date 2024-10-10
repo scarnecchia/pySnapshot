@@ -512,13 +512,13 @@ WITH milLinkedCPatID AS (
          CASE
            WHEN AGE BETWEEN 10 AND 14 THEN '10-14 yrs'
            WHEN AGE BETWEEN 15 AND 19 THEN '15-19 yrs'
-           WHEN AGE BETWEEN 20 AND 24 THEN '20-24 yrs'
-           WHEN AGE BETWEEN 25 AND 29 THEN '25-29 yrs'
-           WHEN AGE BETWEEN 30 AND 34 THEN '30-34 yrs'
-           WHEN AGE BETWEEN 35 AND 39 THEN '35-39 yrs'
-           WHEN AGE BETWEEN 40 AND 44 THEN '40-44 yrs'
-           WHEN AGE BETWEEN 45 AND 49 THEN '45-49 yrs'
-           WHEN AGE BETWEEN 50 AND 54 THEN '50-54 yrs'
+            WHEN AGE BETWEEN 20 AND 24 THEN '20-24 yrs'
+            WHEN AGE BETWEEN 25 AND 29 THEN '25-29 yrs'
+            WHEN AGE BETWEEN 30 AND 34 THEN '30-34 yrs'
+            WHEN AGE BETWEEN 35 AND 39 THEN '35-39 yrs'
+            WHEN AGE BETWEEN 40 AND 44 THEN '40-44 yrs'
+            WHEN AGE BETWEEN 45 AND 49 THEN '45-49 yrs'
+            WHEN AGE BETWEEN 50 AND 54 THEN '50-54 yrs'
           ELSE NULL
          END AS age_category,
          EXTRACT(YEAR FROM adate) AS year,

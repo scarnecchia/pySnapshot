@@ -307,6 +307,9 @@ PySpark:
 Every source file begins with `# pattern: Functional Core` or
 `# pattern: Imperative Shell`.
 
+## License
+
+None.
 
 ## Historical Reference
 

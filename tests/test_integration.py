@@ -143,18 +143,18 @@ def _write_all_data(spark, config: Config) -> None:
         [
             {
                 "mpatid": "M01",
-                "encounter_id": "E01",
+                "encounterid": "E01",
                 "cpatid": "C01",
-                "enc_type": "D",
+                "enctype": "D",
                 "birth_type": "V",
                 "age": 28,
                 "adate": date(2020, 6, 1),
             },
             {
                 "mpatid": "M02",
-                "encounter_id": "E02",
+                "encounterid": "E02",
                 "cpatid": None,
-                "enc_type": "L",
+                "enctype": "L",
                 "birth_type": "C",
                 "age": 35,
                 "adate": date(2021, 3, 15),
@@ -237,9 +237,9 @@ class TestMILOnlyExecution:
             [
                 {
                     "mpatid": "M01",
-                    "encounter_id": "E01",
+                    "encounterid": "E01",
                     "cpatid": "C01",
-                    "enc_type": "D",
+                    "enctype": "D",
                     "birth_type": "V",
                     "age": 28,
                     "adate": date(2020, 6, 1),

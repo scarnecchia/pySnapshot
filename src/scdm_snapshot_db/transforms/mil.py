@@ -1,7 +1,7 @@
 # pattern: Functional Core
 """MIL (maternal-infant linkage) transformations.
 
-Delivery grain is ``(mpatid, encounter_id)``. Per-delivery attribute
+Delivery grain is ``(mpatid, encounterid)``. Per-delivery attribute
 consistency is validated before output writes. Uses native Spark
 aggregations with a single union-based normalized grouping plan rather
 than five independent source scans.
@@ -59,7 +59,7 @@ def mil_age_category(age_col: str = "age") -> Column:
 def mil_build_conflict_check(mil_df: DataFrame) -> DataFrame:
     """Build a lazy DataFrame of delivery-level attribute conflicts.
 
-    For each delivery and each attribute (``enc_type``, ``birth_type``,
+    For each delivery and each attribute (``enctype``, ``birth_type``,
     ``age``, service year from ``adate``), requires the cardinality of the
     null-safe representation ``struct(is_null, value)`` to be exactly one.
     Returns rows where any attribute conflicts.
@@ -75,9 +75,9 @@ def mil_build_conflict_check(mil_df: DataFrame) -> DataFrame:
 
     per_delivery = (
         mil_df.filter(F.col("mpatid").isNotNull())
-        .groupBy("mpatid", "encounter_id")
+        .groupBy("mpatid", "encounterid")
         .agg(
-            F.size(F.collect_set(null_safe("enc_type"))).alias("_enc_type_card"),
+            F.size(F.collect_set(null_safe("enctype"))).alias("_enctype_card"),
             F.size(F.collect_set(null_safe("birth_type"))).alias("_birth_type_card"),
             F.size(F.collect_set(null_safe("age"))).alias("_age_card"),
             F.size(F.collect_set(null_safe("adate"))).alias("_adate_card"),
@@ -85,7 +85,7 @@ def mil_build_conflict_check(mil_df: DataFrame) -> DataFrame:
     )
 
     return per_delivery.filter(
-        (F.col("_enc_type_card") > 1)
+        (F.col("_enctype_card") > 1)
         | (F.col("_birth_type_card") > 1)
         | (F.col("_age_card") > 1)
         | (F.col("_adate_card") > 1)
@@ -100,7 +100,7 @@ def mil_linkage_rates(mil_df: DataFrame, dp: str) -> DataFrame:
 
     Output schema:
     - ``dp: string``
-    - ``variable: string`` (overall, age_category, enc_type, year, birth_type)
+    - ``variable: string`` (overall, age_category, enctype, year, birth_type)
     - ``value: string``
     - ``deliveries: long``
     - ``linked_deliveries: long``
@@ -110,9 +110,9 @@ def mil_linkage_rates(mil_df: DataFrame, dp: str) -> DataFrame:
     # ── Per-delivery grain: attributes and linked flag ──────────────────
     delivery_grain = (
         mil_df.filter(F.col("mpatid").isNotNull())
-        .groupBy("mpatid", "encounter_id")
+        .groupBy("mpatid", "encounterid")
         .agg(
-            F.first("enc_type").alias("_enc_type"),
+            F.first("enctype").alias("_enctype"),
             F.first("birth_type").alias("_birth_type"),
             F.first("age").alias("_age"),
             F.first("adate").alias("_adate"),
@@ -129,23 +129,23 @@ def mil_linkage_rates(mil_df: DataFrame, dp: str) -> DataFrame:
     # ── Per-delivery distinct infants ───────────────────────────────────
     delivery_infants = (
         mil_df.filter(F.col("mpatid").isNotNull() & F.col("cpatid").isNotNull())
-        .select("mpatid", "encounter_id", "cpatid")
+        .select("mpatid", "encounterid", "cpatid")
         .distinct()
     )
 
     # ── Per-delivery is_linked flag ─────────────────────────────────────
     delivery_linked = (
-        delivery_infants.groupBy("mpatid", "encounter_id")
+        delivery_infants.groupBy("mpatid", "encounterid")
         .agg(F.countDistinct("cpatid").cast("long").alias("_infant_count"))
         .withColumn("_is_linked", F.lit(True))
     )
 
     delivery_full = delivery_grain.join(
-        delivery_linked, on=["mpatid", "encounter_id"], how="left"
+        delivery_linked, on=["mpatid", "encounterid"], how="left"
     ).withColumn("_is_linked", F.coalesce(F.col("_is_linked"), F.lit(False)))
 
     # ── Build dimension rows via union ──────────────────────────────────
-    base_cols = ["mpatid", "encounter_id", "_is_linked"]
+    base_cols = ["mpatid", "encounterid", "_is_linked"]
 
     def _null_to_missing(col_ref: Column) -> Column:
         return F.when(col_ref.isNull(), F.lit("MISSING")).otherwise(col_ref)
@@ -161,8 +161,8 @@ def mil_linkage_rates(mil_df: DataFrame, dp: str) -> DataFrame:
         *base_cols,
     )
     enc_rows = delivery_full.select(
-        F.lit("enc_type").alias("variable"),
-        _null_to_missing(F.col("_enc_type")).alias("value"),
+        F.lit("enctype").alias("variable"),
+        _null_to_missing(F.col("_enctype")).alias("value"),
         *base_cols,
     )
     year_rows = delivery_full.select(
@@ -190,7 +190,7 @@ def mil_linkage_rates(mil_df: DataFrame, dp: str) -> DataFrame:
     )
 
     # ── Aggregate distinct_infants_linked ───────────────────────────────
-    dim_with_infants = dimensions.join(delivery_infants, on=["mpatid", "encounter_id"], how="left")
+    dim_with_infants = dimensions.join(delivery_infants, on=["mpatid", "encounterid"], how="left")
     infant_agg = dim_with_infants.groupBy("variable", "value").agg(
         F.countDistinct("cpatid").cast("long").alias("distinct_infants_linked")
     )

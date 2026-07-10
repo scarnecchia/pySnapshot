@@ -91,9 +91,9 @@ DEATH_SCHEMA = StructType(
 MIL_SCHEMA = StructType(
     [
         StructField("mpatid", StringType(), True),
-        StructField("encounter_id", StringType(), True),
+        StructField("encounterid", StringType(), True),
         StructField("cpatid", StringType(), True),
-        StructField("enc_type", StringType(), True),
+        StructField("enctype", StringType(), True),
         StructField("birth_type", StringType(), True),
         StructField("age", IntegerType(), True),
         StructField("adate", DateType(), True),

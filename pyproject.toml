@@ -1,0 +1,83 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "scdm_snapshot_db"
+version = "1.0.0"
+description = "PySpark-based SCDM snapshot analytical pipeline with corrected semantics"
+requires-python = ">=3.11"
+license = { text = "Apache-2.0" }
+authors = [{ name = "Sentinel" }]
+keywords = ["scdm", "spark", "healthcare", "analytics"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+]
+dependencies = [
+    "pyspark>=3.5,<4.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-cov>=5.0",
+    "hypothesis>=6.100",
+    "ruff>=0.8",
+    "mypy>=1.13",
+]
+
+[project.scripts]
+scdm-snapshot = "scdm_snapshot_db.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/scdm_snapshot_db"]
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = [
+    "E",    # pycodestyle errors
+    "W",    # pycodestyle warnings
+    "F",    # pyflakes
+    "I",    # isort
+    "UP",   # pyupgrade
+    "B",    # flake8-bugbear
+    "SIM",  # flake8-simplify
+    "C4",   # flake8-comprehensions
+    "PIE",  # flake8-pie
+    "RET",  # flake8-return
+    "S",    # flake8-bandit (security)
+    "T20",  # flake8-print
+    "RUF",  # ruff-specific
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["S101", "E402", "S108"]  # assert, pytestmark, tmp paths fine in tests
+"src/scdm_snapshot_db/cli.py" = ["T201"]  # CLI uses print for human-readable output
+
+[tool.mypy]
+strict = true
+python_version = "3.11"
+packages = ["src.scdm_snapshot_db"]
+
+[[tool.mypy.overrides]]
+module = ["pyspark.*", "py4j.*"]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+testpaths = ["tests"]
+markers = [
+    "integration: tests that start a local Spark session",
+    "slow: tests that take noticeably longer than unit tests",
+]
+filterwarnings = [
+    "ignore::DeprecationWarning:pyspark.*",
+    "ignore::DeprecationWarning:py4j.*",
+]

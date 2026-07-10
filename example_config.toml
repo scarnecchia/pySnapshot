@@ -1,0 +1,52 @@
+# scdm_snapshot_db example configuration
+# This file uses logical domain names for input paths.
+
+[request]
+dpid = "MKSCNR"
+dp_max_date = "2023-06-30"
+
+[inputs]
+enrollment = "/path/to/enrollment.parquet"
+demographic = "/path/to/demographic.parquet"
+dispensing = "/path/to/dispensing.parquet"
+encounter = "/path/to/encounter.parquet"
+lab = "/path/to/lab.parquet"
+death = "/path/to/death.parquet"
+mil = "/path/to/mil.parquet"
+
+[output]
+root = "output"
+domains = [
+    "enrollment",
+    "demographic",
+    "dispensing",
+    "encounter",
+    "lab",
+    "death",
+    "mil",
+]
+
+[spark]
+master = "local[*]"
+app_name = "scdm_snapshot_db"
+driver_memory = "4g"
+shuffle_partitions = 200
+default_parallelism = 0          # 0 = let Spark decide
+adaptive_query_execution = true
+session_timezone = "UTC"
+broadcast_strategy = "auto"      # auto | broadcast | disabled
+storage_level = "MEMORY_AND_DISK"
+output_partitions = 0            # 0 = let Spark decide
+
+[spark.extra_settings]
+# Additional Spark configuration key/value pairs
+# spark.sql.files.maxPartitionBytes = "134217728"
+
+[write]
+mode = "errorifexists"           # errorifexists | overwrite | ignore
+
+[benchmark]
+repetitions = 5
+clean_output = true
+metadata_path = "benchmark_result.json"
+warmup_repetitions = 0           # 0 = no discarded warm-up runs

@@ -1,4 +1,35 @@
-*.duckdb*
-*.db*
-*.wal
-*.tmp/
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+*.egg
+dist/
+build/
+
+# Virtual environments
+.venv/
+venv/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# Test artifacts
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+htmlcov/
+.coverage
+
+# Spark
+derby.log
+metastore_db/
+spark-warehouse/
+
+# Outputs (do not commit generated data)
+output/
+benchmark_result.json
+
+# OS
+.DS_Store

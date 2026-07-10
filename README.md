@@ -309,7 +309,7 @@ Every source file begins with `# pattern: Functional Core` or
 
 ## License
 
-Apache-2.0
+None.
 
 ## Historical Reference
 

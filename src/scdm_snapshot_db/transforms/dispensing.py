@@ -8,14 +8,13 @@ from pyspark.sql import functions as F
 
 from .event_in_window import count_distribution, events_in_window
 
-__all__ = ["dis_pat_rx_md", "dis_pat_rx_d"]
+__all__ = ["dis_pat_rx_d", "dis_pat_rx_md"]
 
 
 def _pre_aggregate_dispensing(dispensing_df: DataFrame) -> DataFrame:
     """Aggregate dispensing rows by patient and date."""
     return (
-        dispensing_df
-        .filter(F.col("rxdate").isNotNull())
+        dispensing_df.filter(F.col("rxdate").isNotNull())
         .groupBy("patid", "rxdate")
         .agg(F.count(F.lit(1)).cast("long").alias("_count"))
     )

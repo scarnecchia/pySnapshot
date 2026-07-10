@@ -14,7 +14,7 @@ from __future__ import annotations
 from pyspark.sql import DataFrame
 from pyspark.sql import functions as F
 
-__all__ = ["events_in_window", "count_distribution"]
+__all__ = ["count_distribution", "events_in_window"]
 
 
 def events_in_window(
@@ -31,7 +31,7 @@ def events_in_window(
 
     Returns per-patient total event counts with column ``_total``.
     """
-    joined = (
+    return (
         pre_aggregated.join(bridged, on=patid_col, how="inner")
         .filter(
             (F.col(event_date_col) >= F.col("_enr_start"))
@@ -40,7 +40,6 @@ def events_in_window(
         .groupBy(patid_col)
         .agg(F.sum(event_count_col).cast("long").alias("_total"))
     )
-    return joined
 
 
 def count_distribution(
@@ -55,11 +54,13 @@ def count_distribution(
     Groups by the dimension column (the per-patient count value) and counts
     patients. Produces explicit ``dp``, dimension, and ``count`` columns.
     """
-    group_cols = [F.lit(dp).alias("dp"), F.col(count_col).cast("long").alias(dimension_col or count_col)]
-    result = (
-        per_patient_counts
-        .groupBy(*group_cols)
-        .agg(F.count(F.lit(1)).cast("long").alias(output_count_col))
+    dim_name = dimension_col or count_col
+    group_cols = [
+        F.lit(dp).alias("dp"),
+        F.col(count_col).cast("long").alias(dim_name),
+    ]
+    result = per_patient_counts.groupBy(*group_cols).agg(
+        F.count(F.lit(1)).cast("long").alias(output_count_col)
     )
     final_cols = ["dp", dimension_col or count_col, output_count_col]
     return result.select(*final_cols)

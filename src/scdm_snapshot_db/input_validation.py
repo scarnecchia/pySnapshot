@@ -45,22 +45,14 @@ def validate_one_demographic_per_patient(
     start = time.monotonic()
 
     # Count rows per patid, find any with count > 1
-    dup_counts = (
-        demographic_df
-        .groupBy("patid")
-        .count()
-        .filter("count > 1")
-        .collect()
-    )
+    dup_counts = demographic_df.groupBy("patid").count().filter("count > 1").collect()
 
     elapsed = time.monotonic() - start
 
     if dup_counts:
-        examples = [row.patid for row in dup_counts[:5]]
         raise DataValidationError(
             f"duplicate patid found in demographic data; "
-            f"found {len(dup_counts)} patients with multiple rows; "
-            f"examples: {examples}"
+            f"found {len(dup_counts)} patients with multiple rows"
         )
 
     logger.info(

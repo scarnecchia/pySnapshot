@@ -38,8 +38,7 @@ def _pre_aggregate_lab(lab_df: DataFrame) -> DataFrame:
     """Derive test_dt, filter null, aggregate by patient and date."""
     with_test_dt = _derive_test_dt(lab_df)
     return (
-        with_test_dt
-        .filter(F.col("test_dt").isNotNull())
+        with_test_dt.filter(F.col("test_dt").isNotNull())
         .groupBy("patid", "test_dt")
         .agg(F.count(F.lit(1)).cast("long").alias("_count"))
     )

@@ -21,7 +21,7 @@ from .config_models import WriteMode
 
 logger = logging.getLogger(__name__)
 
-__all__ = ["write_output", "ensure_output_dir", "output_path"]
+__all__ = ["ensure_output_dir", "output_path", "write_output"]
 
 
 def output_path(output_root: str, name: str) -> str:
@@ -53,8 +53,7 @@ def write_output(
     out_dir = ensure_output_dir(output_root, name)
     logger.info("writing output %s to %s (mode=%s)", name, out_dir, mode)
 
-    writer = df.write.mode(mode).parquet(out_dir)
-    del writer  # writer is used implicitly via df.write
+    df.write.mode(mode).parquet(out_dir)
 
     logger.info("output %s written successfully", name)
     return out_dir

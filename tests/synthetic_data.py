@@ -6,7 +6,6 @@ Uses explicit Spark schemas for all identifiers, dates, counts, and decimals.
 
 from __future__ import annotations
 
-from datetime import date
 from pathlib import Path
 from typing import TYPE_CHECKING
 
@@ -23,69 +22,83 @@ if TYPE_CHECKING:
     pass
 
 __all__ = [
-    "write_enrollment_parquet",
-    "write_demographic_parquet",
-    "write_dispensing_parquet",
-    "write_encounter_parquet",
-    "write_lab_parquet",
-    "write_death_parquet",
-    "write_mil_parquet",
-    "ENROLLMENT_SCHEMA",
+    "DEATH_SCHEMA",
     "DEMOGRAPHIC_SCHEMA",
     "DISPENSING_SCHEMA",
     "ENCOUNTER_SCHEMA",
+    "ENROLLMENT_SCHEMA",
     "LAB_SCHEMA",
-    "DEATH_SCHEMA",
     "MIL_SCHEMA",
+    "write_death_parquet",
+    "write_demographic_parquet",
+    "write_dispensing_parquet",
+    "write_encounter_parquet",
+    "write_enrollment_parquet",
+    "write_lab_parquet",
+    "write_mil_parquet",
 ]
 
-ENROLLMENT_SCHEMA = StructType([
-    StructField("patid", StringType(), False),
-    StructField("enr_start", DateType(), False),
-    StructField("enr_end", DateType(), False),
-    StructField("drugcov", StringType(), True),
-    StructField("medcov", StringType(), True),
-])
+ENROLLMENT_SCHEMA = StructType(
+    [
+        StructField("patid", StringType(), False),
+        StructField("enr_start", DateType(), False),
+        StructField("enr_end", DateType(), False),
+        StructField("drugcov", StringType(), True),
+        StructField("medcov", StringType(), True),
+    ]
+)
 
-DEMOGRAPHIC_SCHEMA = StructType([
-    StructField("patid", StringType(), False),
-    StructField("birth_date", DateType(), True),
-    StructField("sex", StringType(), True),
-    StructField("race", StringType(), True),
-    StructField("hispanic", StringType(), True),
-])
+DEMOGRAPHIC_SCHEMA = StructType(
+    [
+        StructField("patid", StringType(), False),
+        StructField("birth_date", DateType(), True),
+        StructField("sex", StringType(), True),
+        StructField("race", StringType(), True),
+        StructField("hispanic", StringType(), True),
+    ]
+)
 
-DISPENSING_SCHEMA = StructType([
-    StructField("patid", StringType(), False),
-    StructField("rxdate", DateType(), True),
-])
+DISPENSING_SCHEMA = StructType(
+    [
+        StructField("patid", StringType(), False),
+        StructField("rxdate", DateType(), True),
+    ]
+)
 
-ENCOUNTER_SCHEMA = StructType([
-    StructField("patid", StringType(), False),
-    StructField("adate", DateType(), True),
-])
+ENCOUNTER_SCHEMA = StructType(
+    [
+        StructField("patid", StringType(), False),
+        StructField("adate", DateType(), True),
+    ]
+)
 
-LAB_SCHEMA = StructType([
-    StructField("patid", StringType(), False),
-    StructField("lab_dt", DateType(), True),
-    StructField("result_dt", DateType(), True),
-    StructField("order_dt", DateType(), True),
-])
+LAB_SCHEMA = StructType(
+    [
+        StructField("patid", StringType(), False),
+        StructField("lab_dt", DateType(), True),
+        StructField("result_dt", DateType(), True),
+        StructField("order_dt", DateType(), True),
+    ]
+)
 
-DEATH_SCHEMA = StructType([
-    StructField("patid", StringType(), False),
-    StructField("death_date", DateType(), True),
-])
+DEATH_SCHEMA = StructType(
+    [
+        StructField("patid", StringType(), False),
+        StructField("death_date", DateType(), True),
+    ]
+)
 
-MIL_SCHEMA = StructType([
-    StructField("mpatid", StringType(), True),
-    StructField("encounter_id", StringType(), True),
-    StructField("cpatid", StringType(), True),
-    StructField("enc_type", StringType(), True),
-    StructField("birth_type", StringType(), True),
-    StructField("age", IntegerType(), True),
-    StructField("adate", DateType(), True),
-])
+MIL_SCHEMA = StructType(
+    [
+        StructField("mpatid", StringType(), True),
+        StructField("encounter_id", StringType(), True),
+        StructField("cpatid", StringType(), True),
+        StructField("enc_type", StringType(), True),
+        StructField("birth_type", StringType(), True),
+        StructField("age", IntegerType(), True),
+        StructField("adate", DateType(), True),
+    ]
+)
 
 
 def _write_parquet(

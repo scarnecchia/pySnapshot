@@ -125,11 +125,7 @@ def validate_schema(domain: str, schema: StructType) -> None:
     """Raise ``SchemaError`` if required columns are missing or types are incompatible."""
     missing = check_required_columns(domain, schema)
     if missing:
-        raise SchemaError(
-            f"domain '{domain}' is missing required columns: {', '.join(missing)}"
-        )
+        raise SchemaError(f"domain '{domain}' is missing required columns: {', '.join(missing)}")
     type_findings = check_type_compatibility(domain, schema)
     if type_findings:
-        raise SchemaError(
-            f"domain '{domain}' has type issues: {'; '.join(type_findings)}"
-        )
+        raise SchemaError(f"domain '{domain}' has type issues: {'; '.join(type_findings)}")

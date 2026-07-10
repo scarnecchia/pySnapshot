@@ -29,10 +29,13 @@ __all__ = [
     "BenchmarkSettings",
     "BroadcastStrategy",
     "Config",
+    "Domain",
     "DomainDependency",
     "InputPaths",
+    "OutputDescriptor",
     "RequestValues",
     "SparkSettings",
+    "SubCohort",
     "WriteMode",
     "WriteSettings",
 ]
@@ -104,7 +107,7 @@ class InputPaths:
 
     def for_domain(self, domain: Domain) -> str | None:
         """Return the configured path for the given domain."""
-        return getattr(self, domain.value)
+        return getattr(self, domain.value)  # type: ignore[no-any-return]
 
 
 # ─── Request values ───────────────────────────────────────────────────────────
@@ -152,22 +155,26 @@ class DomainDependency:
 
 
 # Domains that depend on enrollment sub-cohorts
-DEPENDENT_DOMAINS: frozenset[Domain] = frozenset({
-    Domain.DEMOGRAPHIC,
-    Domain.DISPENSING,
-    Domain.ENCOUNTER,
-    Domain.LAB,
-    Domain.DEATH,
-})
+DEPENDENT_DOMAINS: frozenset[Domain] = frozenset(
+    {
+        Domain.DEMOGRAPHIC,
+        Domain.DISPENSING,
+        Domain.ENCOUNTER,
+        Domain.LAB,
+        Domain.DEATH,
+    }
+)
 
 DOMAIN_DEPENDENCIES: dict[Domain, DomainDependency] = {
     Domain.ENROLLMENT: DomainDependency(
         requires_enrollment=True,
-        sub_cohorts=frozenset({
-            SubCohort.MEDICAL_AND_DRUG,
-            SubCohort.DRUG_ONLY,
-            SubCohort.MEDICAL_ONLY,
-        }),
+        sub_cohorts=frozenset(
+            {
+                SubCohort.MEDICAL_AND_DRUG,
+                SubCohort.DRUG_ONLY,
+                SubCohort.MEDICAL_ONLY,
+            }
+        ),
         input_domain=None,
     ),
     Domain.DEMOGRAPHIC: DomainDependency(

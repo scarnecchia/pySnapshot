@@ -14,10 +14,10 @@ from pyspark.sql.window import Window
 
 __all__ = [
     "dem_age_category",
-    "select_latest_span",
-    "dem_pat_lstagecount_md",
-    "dem_pat_actagect_md",
     "dem_catvars_md",
+    "dem_pat_actagect_md",
+    "dem_pat_lstagecount_md",
+    "select_latest_span",
 ]
 
 
@@ -32,8 +32,7 @@ def select_latest_span(bridged_md: DataFrame) -> DataFrame:
         F.col("_enr_end").desc(),
     )
     return (
-        bridged_md
-        .withColumn("_rn", F.row_number().over(w))
+        bridged_md.withColumn("_rn", F.row_number().over(w))
         .filter(F.col("_rn") == 1)
         .select("patid", "_enr_start", "_enr_end")
     )
@@ -85,7 +84,11 @@ def dem_age_category(
     )
 
     return with_category.select(
-        "patid", "age_category", "_enr_start", "_enr_end", "birth_date",
+        "patid",
+        "age_category",
+        "_enr_start",
+        "_enr_end",
+        "birth_date",
     )
 
 
@@ -111,8 +114,7 @@ def dem_pat_lstagecount_md(
     """
     aged = dem_age_category(latest_span, demographic_df)
     return (
-        aged
-        .groupBy(F.lit(dp).alias("dp"), F.col("age_category"))
+        aged.groupBy(F.lit(dp).alias("dp"), F.col("age_category"))
         .agg(F.count(F.lit(1)).cast("long").alias("count"))
         .select("dp", "age_category", "count")
         .orderBy("age_category")
@@ -133,8 +135,7 @@ def dem_pat_actagect_md(
     aged = dem_age_category(latest_span, demographic_df)
     active = _mark_active(aged, dp_max_date).filter(F.col("_dpMaxenroll") == 1)
     return (
-        active
-        .groupBy(F.lit(dp).alias("dp"), F.col("age_category"))
+        active.groupBy(F.lit(dp).alias("dp"), F.col("age_category"))
         .agg(F.count(F.lit(1)).cast("long").alias("count"))
         .select("dp", "age_category", "count")
         .orderBy("age_category")
@@ -162,17 +163,13 @@ def dem_catvars_md(
     # Native stack to reshape from wide to long
     stacked = joined.select(
         "patid",
-        F.expr(
-            "stack(3, "
-            "'sex', sex, "
-            "'race', race, "
-            "'hispanic', hispanic)"
-        ).alias("variable", "value"),
+        F.expr("stack(3, 'sex', sex, 'race', race, 'hispanic', hispanic)").alias(
+            "variable", "value"
+        ),
     )
 
     return (
-        stacked
-        .filter(F.col("value").isNotNull())
+        stacked.filter(F.col("value").isNotNull())
         .groupBy(
             F.lit(dp).alias("dp"),
             F.col("variable"),

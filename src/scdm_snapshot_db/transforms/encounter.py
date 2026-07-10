@@ -14,8 +14,7 @@ __all__ = ["enc_pat_enccount_md"]
 def _pre_aggregate_encounter(encounter_df: DataFrame) -> DataFrame:
     """Aggregate encounter rows by patient and admission date."""
     return (
-        encounter_df
-        .filter(F.col("adate").isNotNull())
+        encounter_df.filter(F.col("adate").isNotNull())
         .groupBy("patid", "adate")
         .agg(F.count(F.lit(1)).cast("long").alias("_count"))
     )

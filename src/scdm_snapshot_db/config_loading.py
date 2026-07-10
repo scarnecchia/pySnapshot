@@ -59,9 +59,7 @@ def _coerce_date(value: Any, key: str) -> date:
 def _check_unknown_keys(table: dict[str, Any], allowed: set[str], section: str) -> None:
     unknown = set(table.keys()) - allowed
     if unknown:
-        raise ConfigError(
-            f"unknown key(s) in [{section}]: {', '.join(sorted(unknown))}"
-        )
+        raise ConfigError(f"unknown key(s) in [{section}]: {', '.join(sorted(unknown))}")
 
 
 def build_config(
@@ -117,9 +115,17 @@ def build_config(
     _check_unknown_keys(
         spark_table,
         {
-            "master", "app_name", "driver_memory", "shuffle_partitions",
-            "default_parallelism", "adaptive_query_execution", "session_timezone",
-            "extra_settings", "broadcast_strategy", "storage_level", "output_partitions",
+            "master",
+            "app_name",
+            "driver_memory",
+            "shuffle_partitions",
+            "default_parallelism",
+            "adaptive_query_execution",
+            "session_timezone",
+            "extra_settings",
+            "broadcast_strategy",
+            "storage_level",
+            "output_partitions",
         },
         "spark",
     )
@@ -136,9 +142,7 @@ def build_config(
         adaptive_query_execution=bool(spark_table.get("adaptive_query_execution", True)),
         session_timezone=str(spark_table.get("session_timezone", "UTC")),
         extra_settings=dict(spark_table.get("extra_settings", {})),
-        broadcast_strategy=_coerce_broadcast(
-            spark_table.get("broadcast_strategy", "auto")
-        ),
+        broadcast_strategy=_coerce_broadcast(spark_table.get("broadcast_strategy", "auto")),
         storage_level=str(spark_table.get("storage_level", "MEMORY_AND_DISK")),
         output_partitions=_coerce_int(
             spark_table.get("output_partitions", 0), "spark.output_partitions"
@@ -152,7 +156,7 @@ def build_config(
     valid_modes: set[WriteMode] = {"errorifexists", "overwrite", "ignore"}
     if write_mode_str not in valid_modes:
         raise ConfigError(f"invalid write mode: {write_mode_str}")
-    write = WriteSettings(mode=write_mode_str)  # type: ignore[arg-type]
+    write = WriteSettings(mode=write_mode_str)
 
     # ── [benchmark] ───────────────────────────────────────────────────────
     bench_table = dict(toml_data.get("benchmark", {}))
@@ -187,7 +191,7 @@ def _coerce_broadcast(value: Any) -> BroadcastStrategy:
     s = str(value)
     if s not in valid:
         raise ConfigError(f"invalid broadcast_strategy: {s}; must be auto, broadcast, or disabled")
-    return s  # type: ignore[return-value]
+    return s
 
 
 def load_config(

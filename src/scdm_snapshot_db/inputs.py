@@ -11,7 +11,6 @@ import logging
 from typing import TYPE_CHECKING
 
 from pyspark.sql import DataFrame
-from pyspark.sql import functions as F
 from pyspark.sql.types import StructType
 
 from .config_models import InputPaths
@@ -25,7 +24,7 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-__all__ = ["InputManifest", "read_inputs", "read_domain"]
+__all__ = ["InputManifest", "read_domain", "read_inputs"]
 
 
 class InputManifest:
@@ -78,8 +77,7 @@ def read_domain(
 
     # Project only required columns
     cols = _required_columns_for_domain(domain)
-    projected = df.select(*cols)
-    return projected
+    return df.select(*cols)
 
 
 def read_inputs(

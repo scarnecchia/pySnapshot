@@ -59,7 +59,15 @@ def classify_exception(exc: BaseException) -> ErrorCategory:
     Checks the ``category`` attribute of domain exceptions, then falls back
     to ``unknown`` for anything unrecognized.
     """
-    category = getattr(exc, "category", None)
-    if category is not None:
+    category: object = getattr(exc, "category", None)
+    valid_categories = {
+        "config",
+        "input_schema",
+        "data_validation",
+        "spark_execution",
+        "output",
+        "unknown",
+    }
+    if isinstance(category, str) and category in valid_categories:
         return category  # type: ignore[return-value]
     return "unknown"

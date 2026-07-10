@@ -9,7 +9,8 @@ from __future__ import annotations
 
 import contextlib
 import logging
-from typing import TYPE_CHECKING, Iterator
+from collections.abc import Iterator
+from typing import TYPE_CHECKING
 
 from pyspark.sql import SparkSession
 
@@ -20,7 +21,7 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-__all__ = ["create_spark_session", "spark_session_scope", "get_effective_settings"]
+__all__ = ["create_spark_session", "get_effective_settings", "spark_session_scope"]
 
 
 def create_spark_session(settings: SparkSettings) -> SparkSession:
@@ -29,8 +30,7 @@ def create_spark_session(settings: SparkSettings) -> SparkSession:
     Sets deterministic timezone, adaptive execution, and tuning parameters.
     """
     builder = (
-        SparkSession.builder
-        .master(settings.master)
+        SparkSession.builder.master(settings.master)
         .appName(settings.app_name)
         .config("spark.driver.memory", settings.driver_memory)
         .config("spark.sql.shuffle.partitions", str(settings.shuffle_partitions))

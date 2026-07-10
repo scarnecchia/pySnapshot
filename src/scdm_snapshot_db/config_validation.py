@@ -62,15 +62,11 @@ def validate_input_paths_for_domains(
     for domain in domains:
         dep = DOMAIN_DEPENDENCIES[domain]
         if dep.requires_enrollment and input_paths.enrollment is None:
-            raise ConfigError(
-                f"enrollment input path required because {domain.value} is selected"
-            )
+            raise ConfigError(f"enrollment input path required because {domain.value} is selected")
         input_domain = DOMAIN_INPUT_REQUIRED[domain]
         path = input_paths.for_domain(input_domain)
         if path is None:
-            raise ConfigError(
-                f"input path for {input_domain.value} is required but not configured"
-            )
+            raise ConfigError(f"input path for {input_domain.value} is required but not configured")
 
 
 def validate_output_overlap(output_root: str, input_paths: InputPaths) -> None:
@@ -83,9 +79,7 @@ def validate_output_overlap(output_root: str, input_paths: InputPaths) -> None:
         inp = PurePath(path_str)
         # Check if output is inside input or input is inside output
         if _is_prefix(out, inp) or _is_prefix(inp, out):
-            raise ConfigError(
-                f"output root must not overlap with input path for {domain.value}"
-            )
+            raise ConfigError(f"output root must not overlap with input path for {domain.value}")
 
 
 def _is_prefix(a: PurePath, b: PurePath) -> bool:
@@ -126,10 +120,8 @@ def validate_write_mode(mode: str) -> WriteMode:
     """Validate the write mode string."""
     valid: set[WriteMode] = {"errorifexists", "overwrite", "ignore"}
     if mode not in valid:
-        raise ConfigError(
-            f"write mode '{mode}' must be one of {', '.join(sorted(valid))}"
-        )
-    return mode  # type: ignore[return-value]
+        raise ConfigError(f"write mode '{mode}' must be one of {', '.join(sorted(valid))}")
+    return mode
 
 
 # ─── Domain resolution ────────────────────────────────────────────────────────
@@ -172,11 +164,7 @@ def resolve_outputs_for_domains(domains: frozenset[Domain]) -> list[str]:
     """Return the ordered list of output names for the selected domains."""
     from .config_models import OUTPUT_REGISTRY
 
-    return [
-        desc.name
-        for desc in OUTPUT_REGISTRY
-        if desc.domain in domains
-    ]
+    return [desc.name for desc in OUTPUT_REGISTRY if desc.domain in domains]
 
 
 # ─── Full config validation ───────────────────────────────────────────────────
@@ -206,8 +194,7 @@ def parse_domain_names(names: list[str]) -> frozenset[Domain]:
     for name in names:
         if name not in _VALID_DOMAIN_NAMES:
             raise ConfigError(
-                f"unknown domain '{name}'; valid domains: "
-                f"{', '.join(sorted(_VALID_DOMAIN_NAMES))}"
+                f"unknown domain '{name}'; valid domains: {', '.join(sorted(_VALID_DOMAIN_NAMES))}"
             )
         domain = Domain(name)
         if domain in result:

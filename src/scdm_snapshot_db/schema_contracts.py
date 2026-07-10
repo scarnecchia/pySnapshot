@@ -58,9 +58,9 @@ REQUIRED_COLUMNS: dict[str, list[tuple[str, set[str]]]] = {
     ],
     "mil": [
         ("mpatid", {"string"}),
-        ("encounter_id", {"string"}),
+        ("encounterid", {"string"}),
         ("cpatid", {"string"}),
-        ("enc_type", {"string"}),
+        ("enctype", {"string"}),
         ("birth_type", {"string"}),
         ("age", {"int", "long", "double", "decimal"}),
         ("adate", {"date"}),

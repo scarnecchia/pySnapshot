@@ -21,9 +21,9 @@ from scdm_snapshot_db.transforms import mil
 MIL_SCHEMA = StructType(
     [
         StructField("mpatid", StringType(), True),
-        StructField("encounter_id", StringType(), True),
+        StructField("encounterid", StringType(), True),
         StructField("cpatid", StringType(), True),
-        StructField("enc_type", StringType(), True),
+        StructField("enctype", StringType(), True),
         StructField("birth_type", StringType(), True),
         StructField("age", IntegerType(), True),
         StructField("adate", DateType(), True),
@@ -42,9 +42,9 @@ class TestMILAgeCategories:
             # age 0 → 0-1 yrs
             {
                 "mpatid": "M01",
-                "encounter_id": "E01",
+                "encounterid": "E01",
                 "cpatid": "C01",
-                "enc_type": "D",
+                "enctype": "D",
                 "birth_type": "V",
                 "age": 0,
                 "adate": date(2020, 1, 1),
@@ -52,9 +52,9 @@ class TestMILAgeCategories:
             # age 55 → 55+ yrs
             {
                 "mpatid": "M02",
-                "encounter_id": "E02",
+                "encounterid": "E02",
                 "cpatid": None,
-                "enc_type": "D",
+                "enctype": "D",
                 "birth_type": "C",
                 "age": 55,
                 "adate": date(2020, 6, 1),
@@ -62,9 +62,9 @@ class TestMILAgeCategories:
             # age null → MISSING
             {
                 "mpatid": "M03",
-                "encounter_id": "E03",
+                "encounterid": "E03",
                 "cpatid": "C03",
-                "enc_type": "D",
+                "enctype": "D",
                 "birth_type": "V",
                 "age": None,
                 "adate": date(2020, 3, 15),
@@ -72,9 +72,9 @@ class TestMILAgeCategories:
             # age -1 → NEGATIVE
             {
                 "mpatid": "M04",
-                "encounter_id": "E04",
+                "encounterid": "E04",
                 "cpatid": None,
-                "enc_type": "D",
+                "enctype": "D",
                 "birth_type": "V",
                 "age": -1,
                 "adate": date(2020, 7, 1),
@@ -95,18 +95,18 @@ class TestMILAgeCategories:
         deliveries = [
             {
                 "mpatid": "M01",
-                "encounter_id": "E01",
+                "encounterid": "E01",
                 "cpatid": "C01",
-                "enc_type": "D",
+                "enctype": "D",
                 "birth_type": "V",
                 "age": 3,
                 "adate": date(2020, 1, 1),
             },
             {
                 "mpatid": "M02",
-                "encounter_id": "E02",
+                "encounterid": "E02",
                 "cpatid": None,
-                "enc_type": "D",
+                "enctype": "D",
                 "birth_type": "V",
                 "age": 60,
                 "adate": date(2020, 1, 1),
@@ -125,18 +125,18 @@ class TestMILGroupedResults:
         deliveries = [
             {
                 "mpatid": "M01",
-                "encounter_id": "E01",
+                "encounterid": "E01",
                 "cpatid": "C01",
-                "enc_type": "D",
+                "enctype": "D",
                 "birth_type": "V",
                 "age": 25,
                 "adate": date(2020, 1, 1),
             },
             {
                 "mpatid": "M02",
-                "encounter_id": "E02",
+                "encounterid": "E02",
                 "cpatid": None,
-                "enc_type": "L",
+                "enctype": "L",
                 "birth_type": "C",
                 "age": 30,
                 "adate": date(2021, 6, 1),
@@ -147,7 +147,7 @@ class TestMILGroupedResults:
         variables = {r.variable for r in result}
         assert "overall" in variables
         assert "age_category" in variables
-        assert "enc_type" in variables
+        assert "enctype" in variables
         assert "year" in variables
         assert "birth_type" in variables
 
@@ -156,18 +156,18 @@ class TestMILGroupedResults:
         deliveries = [
             {
                 "mpatid": "M01",
-                "encounter_id": "E01",
+                "encounterid": "E01",
                 "cpatid": "C01",
-                "enc_type": "D",
+                "enctype": "D",
                 "birth_type": "V",
                 "age": 25,
                 "adate": date(2020, 1, 1),
             },
             {
                 "mpatid": "M01",
-                "encounter_id": "E01",
+                "encounterid": "E01",
                 "cpatid": "C01",
-                "enc_type": "D",
+                "enctype": "D",
                 "birth_type": "V",
                 "age": 25,
                 "adate": date(2020, 1, 1),
@@ -187,9 +187,9 @@ class TestMILSchemaAndPrecision:
         deliveries = [
             {
                 "mpatid": "M01",
-                "encounter_id": "E01",
+                "encounterid": "E01",
                 "cpatid": "C01",
-                "enc_type": "D",
+                "enctype": "D",
                 "birth_type": "V",
                 "age": 25,
                 "adate": date(2020, 1, 1),
@@ -233,18 +233,18 @@ class TestMILConflictDetection:
         deliveries = [
             {
                 "mpatid": "M01",
-                "encounter_id": "E01",
+                "encounterid": "E01",
                 "cpatid": "C01",
-                "enc_type": "D",
+                "enctype": "D",
                 "birth_type": "V",
                 "age": 25,
                 "adate": date(2020, 1, 1),
             },
             {
                 "mpatid": "M01",
-                "encounter_id": "E01",
+                "encounterid": "E01",
                 "cpatid": "C02",
-                "enc_type": "L",  # different enc_type
+                "enctype": "L",  # different enctype
                 "birth_type": "V",
                 "age": 25,
                 "adate": date(2020, 1, 1),
@@ -259,18 +259,18 @@ class TestMILConflictDetection:
         deliveries = [
             {
                 "mpatid": "M01",
-                "encounter_id": "E01",
+                "encounterid": "E01",
                 "cpatid": "C01",
-                "enc_type": "D",
+                "enctype": "D",
                 "birth_type": "V",
                 "age": 25,
                 "adate": date(2020, 1, 1),
             },
             {
                 "mpatid": "M01",
-                "encounter_id": "E01",
+                "encounterid": "E01",
                 "cpatid": "C02",
-                "enc_type": "D",
+                "enctype": "D",
                 "birth_type": "V",
                 "age": 25,
                 "adate": date(2020, 1, 1),
@@ -285,18 +285,18 @@ class TestMILConflictDetection:
         deliveries = [
             {
                 "mpatid": "M01",
-                "encounter_id": "E01",
+                "encounterid": "E01",
                 "cpatid": "C01",
-                "enc_type": None,
+                "enctype": None,
                 "birth_type": None,
                 "age": None,
                 "adate": None,
             },
             {
                 "mpatid": "M01",
-                "encounter_id": "E01",
+                "encounterid": "E01",
                 "cpatid": "C02",
-                "enc_type": None,
+                "enctype": None,
                 "birth_type": None,
                 "age": None,
                 "adate": None,

@@ -86,7 +86,7 @@ INTENTIONAL_SUPERSETS: dict[tuple[str, str], set[str]] = {
     ("lab", "result_dt"): {"string", "timestamp"},
     ("lab", "order_dt"): {"string", "timestamp"},
     ("mil", "birth_type"): {"long"},  # canonical Int32 → {"int"}, contract adds {"long"}
-    ("mil", "age"): {"double", "decimal"},  # canonical Int64 → {"int","long"}, contract adds wider numeric
+    ("mil", "age"): {"double", "decimal"},  # Int64 → wider numeric
 }
 
 
@@ -271,7 +271,7 @@ class TestCanonicalContract:
         """
         DATE_NAME_SUFFIXES = ("_dt", "_date", "date", "_start", "_end")
 
-        for domain, table in DOMAIN_TO_TABLE.items():
+        for _domain, table in DOMAIN_TO_TABLE.items():
             canonical = _canonical_columns(table)
             for col_name, polars_type in canonical.items():
                 if polars_type != "Float64":
@@ -302,7 +302,7 @@ class TestCanonicalContract:
     def test_intentional_supersets_exist_in_contract(self) -> None:
         """Every entry in INTENTIONAL_SUPERSETS must reference a column that
         actually exists in REQUIRED_COLUMNS."""
-        for (domain, col_name), extra_types in INTENTIONAL_SUPERSETS.items():
+        for (domain, col_name), _extra_types in INTENTIONAL_SUPERSETS.items():
             required = REQUIRED_COLUMNS.get(domain, [])
             col_dict = dict(required)
             assert col_name in col_dict, (
@@ -312,14 +312,17 @@ class TestCanonicalContract:
 
 
 # ---------------------------------------------------------------------------
-# Layer 2: Behavioral tests (require Spark)
+# Layer 2a: Behavioral tests using StructType metadata (no Spark session needed)
 # ---------------------------------------------------------------------------
 
-@pytest.mark.integration
 class TestValidateSchemaDeath:
-    """Behavioral tests for validate_schema with death domain."""
+    """Behavioral tests for validate_schema with death domain.
 
-    def test_validate_schema_accepts_canonical_death(self, spark) -> None:
+    These tests construct StructType/StructField metadata and call pure
+    schema functions — no Spark session is required.
+    """
+
+    def test_validate_schema_accepts_canonical_death(self) -> None:
         """validate_schema('death', ...) accepts patid LongType + deathdt DateType."""
         from pyspark.sql.types import (
             DateType,
@@ -335,16 +338,17 @@ class TestValidateSchemaDeath:
         # Should not raise
         schema_contracts.validate_schema("death", schema)
 
-    def test_validate_schema_rejects_legacy_death_date(self, spark) -> None:
+    def test_validate_schema_rejects_legacy_death_date(self) -> None:
         """validate_schema('death', ...) raises SchemaError when only death_date
         is present (no deathdt)."""
-        from scdm_snapshot_db.error_classification import SchemaError
         from pyspark.sql.types import (
             DateType,
             LongType,
             StructField,
             StructType,
         )
+
+        from scdm_snapshot_db.error_classification import SchemaError
 
         schema = StructType([
             StructField("patid", LongType(), False),
@@ -353,16 +357,17 @@ class TestValidateSchemaDeath:
         with pytest.raises(SchemaError, match="deathdt"):
             schema_contracts.validate_schema("death", schema)
 
-    def test_validate_schema_rejects_wrong_deathdt_type(self, spark) -> None:
+    def test_validate_schema_rejects_wrong_deathdt_type(self) -> None:
         """validate_schema('death', ...) raises SchemaError when deathdt is
         StringType instead of DateType."""
-        from scdm_snapshot_db.error_classification import SchemaError
         from pyspark.sql.types import (
             LongType,
             StringType,
             StructField,
             StructType,
         )
+
+        from scdm_snapshot_db.error_classification import SchemaError
 
         schema = StructType([
             StructField("patid", LongType(), False),
@@ -372,11 +377,10 @@ class TestValidateSchemaDeath:
             schema_contracts.validate_schema("death", schema)
 
 
-@pytest.mark.integration
-class TestLabStringDates:
-    """Behavioral tests for lab date columns accepting string type."""
+class TestLabStringDateValidation:
+    """Lab date validation tests using StructType metadata (no Spark session)."""
 
-    def test_lab_string_dates_pass_validation(self, spark) -> None:
+    def test_lab_string_dates_pass_validation(self) -> None:
         """check_type_compatibility('lab', ...) returns empty findings when lab
         date columns are StringType."""
         from pyspark.sql.types import (
@@ -394,6 +398,15 @@ class TestLabStringDates:
         ])
         findings = schema_contracts.check_type_compatibility("lab", schema)
         assert findings == [], f"Expected no findings, got: {findings}"
+
+
+# ---------------------------------------------------------------------------
+# Layer 2b: Integration tests (require Spark session)
+# ---------------------------------------------------------------------------
+
+@pytest.mark.integration
+class TestLabStringDatesSpark:
+    """Lab date parsing tests that require a Spark session."""
 
     def test_lab_string_dates_derive_test_dt(self, spark) -> None:
         """_derive_test_dt produces valid test_dt for ISO date strings and null

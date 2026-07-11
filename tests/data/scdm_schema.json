@@ -1,0 +1,2110 @@
+{
+  "enrollment": {
+    "sort_order": [
+      "PatID",
+      "Enr_Start",
+      "Enr_End",
+      "MedCov",
+      "DrugCov",
+      "Chart"
+    ],
+    "unique_row": [
+      "PatID",
+      "Enr_Start",
+      "Enr_End",
+      "MedCov",
+      "DrugCov",
+      "Chart",
+      "PlanType",
+      "PayerType"
+    ],
+    "columns": [
+      {
+        "name": "patid",
+        "sas_type": "numeric",
+        "polars_type": "Int64",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "enr_start",
+        "sas_type": "numeric",
+        "polars_type": "Float64",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "enr_end",
+        "sas_type": "numeric",
+        "polars_type": "Float64",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "medcov",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": [
+          "Y",
+          "N",
+          "U",
+          "A"
+        ]
+      },
+      {
+        "name": "drugcov",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": [
+          "Y",
+          "N",
+          "U"
+        ]
+      },
+      {
+        "name": "chart",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": [
+          "Y",
+          "N"
+        ]
+      },
+      {
+        "name": "plantype",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": true,
+        "nullable_condition": "",
+        "valid_values": [
+          "F",
+          "H",
+          "E",
+          "P",
+          "S",
+          "M",
+          "O",
+          "U"
+        ]
+      },
+      {
+        "name": "payertype",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": true,
+        "nullable_condition": "",
+        "valid_values": [
+          "CO",
+          "MC",
+          "MD",
+          "OG",
+          "OT",
+          "UN"
+        ]
+      }
+    ]
+  },
+  "demographic": {
+    "sort_order": [
+      "PatID"
+    ],
+    "unique_row": [
+      "PatID"
+    ],
+    "columns": [
+      {
+        "name": "patid",
+        "sas_type": "numeric",
+        "polars_type": "Int64",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "birth_date",
+        "sas_type": "numeric",
+        "polars_type": "Float64",
+        "nullable": true,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "sex",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": [
+          "A",
+          "F",
+          "M",
+          "U"
+        ]
+      },
+      {
+        "name": "hispanic",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": [
+          "N",
+          "U",
+          "Y"
+        ]
+      },
+      {
+        "name": "race",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "imputedhispanic",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": true,
+        "nullable_condition": "",
+        "valid_values": [
+          "N",
+          "U",
+          "Y"
+        ]
+      },
+      {
+        "name": "imputedrace",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": true,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "postalcode",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": true,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "postalcode_date",
+        "sas_type": "numeric",
+        "polars_type": "Float64",
+        "nullable": true,
+        "nullable_condition": "",
+        "valid_values": []
+      }
+    ]
+  },
+  "dispensing": {
+    "sort_order": [
+      "PatID",
+      "RxDate"
+    ],
+    "unique_row": [
+      "PatID",
+      "RxDate",
+      "Rx_CodeType",
+      "Rx",
+      "ProviderID"
+    ],
+    "columns": [
+      {
+        "name": "patid",
+        "sas_type": "numeric",
+        "polars_type": "Int64",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "providerid",
+        "sas_type": "numeric",
+        "polars_type": "Int64",
+        "nullable": true,
+        "nullable_condition": "Only SAS Special Missing .U allowed",
+        "valid_values": []
+      },
+      {
+        "name": "rxdate",
+        "sas_type": "numeric",
+        "polars_type": "Float64",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "rx",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "rx_codetype",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": [
+          "ND",
+          "SN",
+          "SK",
+          "DM",
+          "DI",
+          "RN",
+          "AT"
+        ]
+      },
+      {
+        "name": "rxsup",
+        "sas_type": "numeric",
+        "polars_type": "Int32",
+        "nullable": true,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "rxamt",
+        "sas_type": "numeric",
+        "polars_type": "Int32",
+        "nullable": true,
+        "nullable_condition": "",
+        "valid_values": []
+      }
+    ]
+  },
+  "encounter": {
+    "sort_order": [
+      "PatID",
+      "ADate"
+    ],
+    "unique_row": [
+      "EncounterID"
+    ],
+    "columns": [
+      {
+        "name": "patid",
+        "sas_type": "numeric",
+        "polars_type": "Int64",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "encounterid",
+        "sas_type": "numeric",
+        "polars_type": "Int64",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "adate",
+        "sas_type": "numeric",
+        "polars_type": "Float64",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "ddate",
+        "sas_type": "numeric",
+        "polars_type": "Float64",
+        "nullable": true,
+        "nullable_condition": "Yes, conditional on EncType value. If EncType = IP or IS, only SAS special missing .S is allowed.",
+        "valid_values": []
+      },
+      {
+        "name": "enctype",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": [
+          "AV",
+          "ED",
+          "IP",
+          "IS",
+          "OA"
+        ]
+      },
+      {
+        "name": "facilityid",
+        "sas_type": "numeric",
+        "polars_type": "Int64",
+        "nullable": true,
+        "nullable_condition": "Only SAS special missing .U allowed",
+        "valid_values": []
+      },
+      {
+        "name": "discharge_disposition",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": true,
+        "nullable_condition": "Yes, conditional on EncType value",
+        "valid_values": [
+          "A",
+          "E",
+          "S",
+          "U"
+        ]
+      },
+      {
+        "name": "discharge_status",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": true,
+        "nullable_condition": "Yes, conditional on EncType value",
+        "valid_values": [
+          "AF",
+          "AL",
+          "AM",
+          "AW",
+          "EX",
+          "HH",
+          "HO",
+          "HS",
+          "IP",
+          "NH",
+          "OT",
+          "RH",
+          "RS",
+          "SH",
+          "SN",
+          "UN"
+        ]
+      },
+      {
+        "name": "drg",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": true,
+        "nullable_condition": "Yes, conditional on EncType value",
+        "valid_values": []
+      },
+      {
+        "name": "drg_type",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": true,
+        "nullable_condition": "Yes, conditional on EncType value",
+        "valid_values": []
+      },
+      {
+        "name": "admitting_source",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": true,
+        "nullable_condition": "Yes, conditional on EncType value",
+        "valid_values": [
+          "AF",
+          "AL",
+          "AV",
+          "ED",
+          "HH",
+          "HO",
+          "HS",
+          "IP",
+          "NH",
+          "OT",
+          "RH",
+          "RS",
+          "SN",
+          "UN"
+        ]
+      }
+    ]
+  },
+  "diagnosis": {
+    "sort_order": [
+      "PatID",
+      "ADate"
+    ],
+    "unique_row": [
+      "EncounterID",
+      "DX_CodeType",
+      "DX",
+      "ProviderID"
+    ],
+    "columns": [
+      {
+        "name": "patid",
+        "sas_type": "numeric",
+        "polars_type": "Int64",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "encounterid",
+        "sas_type": "numeric",
+        "polars_type": "Int64",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "adate",
+        "sas_type": "numeric",
+        "polars_type": "Float64",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "providerid",
+        "sas_type": "numeric",
+        "polars_type": "Int64",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "enctype",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": [
+          "AV",
+          "ED",
+          "IP",
+          "IS",
+          "OA"
+        ]
+      },
+      {
+        "name": "dx",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "dx_codetype",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": [
+          "C9",
+          "C0",
+          "SM",
+          "OT"
+        ]
+      },
+      {
+        "name": "origdx",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "pdx",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": true,
+        "nullable_condition": "Yes, conditional on EncType value",
+        "valid_values": [
+          "P",
+          "S",
+          "X"
+        ]
+      },
+      {
+        "name": "padmit",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": [
+          "N",
+          "Y",
+          "U",
+          "X"
+        ]
+      }
+    ]
+  },
+  "procedure": {
+    "sort_order": [
+      "PatID",
+      "ADate"
+    ],
+    "unique_row": [
+      "EncounterID",
+      "PX_CodeType",
+      "PX",
+      "ProviderID"
+    ],
+    "columns": [
+      {
+        "name": "patid",
+        "sas_type": "numeric",
+        "polars_type": "Int64",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "encounterid",
+        "sas_type": "numeric",
+        "polars_type": "Int64",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "adate",
+        "sas_type": "numeric",
+        "polars_type": "Float64",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "providerid",
+        "sas_type": "numeric",
+        "polars_type": "Int64",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "enctype",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": [
+          "AV",
+          "ED",
+          "IP",
+          "IS",
+          "OA"
+        ]
+      },
+      {
+        "name": "px",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "px_codetype",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": [
+          "C2",
+          "C3",
+          "C4",
+          "CP",
+          "CX",
+          "H3",
+          "HC",
+          "LC",
+          "LO",
+          "ND",
+          "OT",
+          "RE",
+          "SK",
+          "CV"
+        ]
+      },
+      {
+        "name": "origpx",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": true,
+        "nullable_condition": "",
+        "valid_values": []
+      }
+    ]
+  },
+  "death": {
+    "sort_order": [
+      "PatID"
+    ],
+    "unique_row": [
+      "PatID"
+    ],
+    "columns": [
+      {
+        "name": "patid",
+        "sas_type": "numeric",
+        "polars_type": "Int64",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "deathdt",
+        "sas_type": "numeric",
+        "polars_type": "Float64",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "dtimpute",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": [
+          "B",
+          "D",
+          "M",
+          "N"
+        ]
+      },
+      {
+        "name": "source",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": [
+          "L",
+          "M",
+          "N",
+          "O",
+          "S",
+          "T"
+        ]
+      },
+      {
+        "name": "confidence",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": [
+          "E",
+          "F",
+          "P"
+        ]
+      }
+    ]
+  },
+  "cause_of_death": {
+    "sort_order": [
+      "PatID"
+    ],
+    "unique_row": [
+      "PatID",
+      "CodeType",
+      "COD",
+      "Source"
+    ],
+    "columns": [
+      {
+        "name": "patid",
+        "sas_type": "numeric",
+        "polars_type": "Int64",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "cod",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "codetype",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "causetype",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": [
+          "C",
+          "I",
+          "O",
+          "U"
+        ]
+      },
+      {
+        "name": "source",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": [
+          "L",
+          "M",
+          "N",
+          "O",
+          "S",
+          "T"
+        ]
+      },
+      {
+        "name": "confidence",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": [
+          "E",
+          "F",
+          "P"
+        ]
+      }
+    ]
+  },
+  "laboratory_result": {
+    "sort_order": [
+      "PatID"
+    ],
+    "unique_row": [
+      "LabID"
+    ],
+    "columns": [
+      {
+        "name": "patid",
+        "sas_type": "numeric",
+        "polars_type": "Int64",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "labid",
+        "sas_type": "numeric",
+        "polars_type": "Int64",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "ms_test_name",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "result_type",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": [
+          "N",
+          "C",
+          "U"
+        ]
+      },
+      {
+        "name": "ms_test_sub_category",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": true,
+        "nullable_condition": "Yes, conditioned on MS_Test_Name",
+        "valid_values": []
+      },
+      {
+        "name": "fast_ind",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": [
+          "F",
+          "R",
+          "X",
+          "U"
+        ]
+      },
+      {
+        "name": "specimen_source",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "loinc",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": true,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "stat",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": [
+          "E",
+          "R",
+          "S",
+          "U"
+        ]
+      },
+      {
+        "name": "pt_loc",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": [
+          "E",
+          "H",
+          "I",
+          "O",
+          "U"
+        ]
+      },
+      {
+        "name": "result_loc",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": true,
+        "nullable_condition": "",
+        "valid_values": [
+          "L",
+          "P"
+        ]
+      },
+      {
+        "name": "local_cd",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": true,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "battery_cd",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": true,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "px",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": true,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "px_codetype",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": true,
+        "nullable_condition": "Yes, conditioned on whether PX is populated",
+        "valid_values": [
+          "C2",
+          "C3",
+          "C4",
+          "CP",
+          "CX",
+          "H3",
+          "HC",
+          "LO",
+          "RE",
+          "SK",
+          "OT"
+        ]
+      },
+      {
+        "name": "order_dt",
+        "sas_type": "numeric",
+        "polars_type": "Float64",
+        "nullable": true,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "lab_dt",
+        "sas_type": "numeric",
+        "polars_type": "Float64",
+        "nullable": true,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "lab_tm",
+        "sas_type": "numeric",
+        "polars_type": "Float64",
+        "nullable": true,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "result_dt",
+        "sas_type": "numeric",
+        "polars_type": "Float64",
+        "nullable": true,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "result_tm",
+        "sas_type": "numeric",
+        "polars_type": "Float64",
+        "nullable": true,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "orig_result",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "ms_result_c",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": true,
+        "nullable_condition": "Yes, unless Result_Type=C",
+        "valid_values": []
+      },
+      {
+        "name": "ms_result_n",
+        "sas_type": "numeric",
+        "polars_type": "Float64",
+        "nullable": true,
+        "nullable_condition": "Yes, unless Result_Type=N",
+        "valid_values": []
+      },
+      {
+        "name": "modifier",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": [
+          "EQ",
+          "GE",
+          "GT",
+          "LE",
+          "LT",
+          "TX",
+          "UN"
+        ]
+      },
+      {
+        "name": "orig_result_unit",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": true,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "std_result_unit",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": true,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "ms_result_unit",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": true,
+        "nullable_condition": "Yes, unless Result_Type=N",
+        "valid_values": []
+      },
+      {
+        "name": "norm_range_low",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": true,
+        "nullable_condition": "Yes, unless Result_Type=N",
+        "valid_values": []
+      },
+      {
+        "name": "modifier_low",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": true,
+        "nullable_condition": "Conditionally required when Result_Type=N",
+        "valid_values": [
+          "EQ",
+          "GE",
+          "GT"
+        ]
+      },
+      {
+        "name": "norm_range_high",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": true,
+        "nullable_condition": "Conditionally required when Result_Type=N",
+        "valid_values": []
+      },
+      {
+        "name": "modifier_high",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": true,
+        "nullable_condition": "Yes, unless Result_Type=N",
+        "valid_values": [
+          "EQ",
+          "LE",
+          "LT"
+        ]
+      },
+      {
+        "name": "abn_ind",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": [
+          "AB",
+          "AH",
+          "AL",
+          "CH",
+          "CL",
+          "CR",
+          "IN",
+          "NL",
+          "UN"
+        ]
+      },
+      {
+        "name": "order_dept",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": true,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "facilityid",
+        "sas_type": "numeric",
+        "polars_type": "Int64",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": []
+      }
+    ]
+  },
+  "vital_signs": {
+    "sort_order": [
+      "PatID",
+      "Measure_Date"
+    ],
+    "unique_row": [],
+    "columns": [
+      {
+        "name": "patid",
+        "sas_type": "numeric",
+        "polars_type": "Int64",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "encounterid",
+        "sas_type": "numeric",
+        "polars_type": "Int64",
+        "nullable": true,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "measure_date",
+        "sas_type": "numeric",
+        "polars_type": "Float64",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "measure_time",
+        "sas_type": "numeric",
+        "polars_type": "Float64",
+        "nullable": true,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "ht",
+        "sas_type": "numeric",
+        "polars_type": "Float64",
+        "nullable": true,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "wt",
+        "sas_type": "numeric",
+        "polars_type": "Float64",
+        "nullable": true,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "diastolic",
+        "sas_type": "numeric",
+        "polars_type": "Float64",
+        "nullable": true,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "systolic",
+        "sas_type": "numeric",
+        "polars_type": "Float64",
+        "nullable": true,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "bp_type",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": true,
+        "nullable_condition": "",
+        "valid_values": [
+          "E",
+          "M",
+          "O",
+          "R"
+        ]
+      },
+      {
+        "name": "position",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": true,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "tobacco",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": true,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "tobacco_type",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": true,
+        "nullable_condition": "",
+        "valid_values": []
+      }
+    ]
+  },
+  "inpatient_pharmacy": {
+    "sort_order": [
+      "PatID",
+      "RxADate"
+    ],
+    "unique_row": [
+      "RxID"
+    ],
+    "columns": [
+      {
+        "name": "patid",
+        "sas_type": "numeric",
+        "polars_type": "Int64",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "encounterid",
+        "sas_type": "numeric",
+        "polars_type": "Int64",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "ndc",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "rxid",
+        "sas_type": "numeric",
+        "polars_type": "Int64",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "rxadate",
+        "sas_type": "numeric",
+        "polars_type": "Float64",
+        "nullable": true,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "rxatime",
+        "sas_type": "numeric",
+        "polars_type": "Float64",
+        "nullable": true,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "rxroute",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": true,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "rxdose",
+        "sas_type": "numeric",
+        "polars_type": "Float64",
+        "nullable": true,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "rxuom",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": true,
+        "nullable_condition": "",
+        "valid_values": []
+      }
+    ]
+  },
+  "inpatient_transfusion": {
+    "sort_order": [
+      "PatID",
+      "TDate_Start"
+    ],
+    "unique_row": [
+      "TransID"
+    ],
+    "columns": [
+      {
+        "name": "patid",
+        "sas_type": "numeric",
+        "polars_type": "Int64",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "encounterid",
+        "sas_type": "numeric",
+        "polars_type": "Int64",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "transid",
+        "sas_type": "numeric",
+        "polars_type": "Int64",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "transcode",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "transcode_type",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": [
+          "CD",
+          "IS"
+        ]
+      },
+      {
+        "name": "orig_transprod",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": true,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "bloodtype",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "tdate_start",
+        "sas_type": "numeric",
+        "polars_type": "Float64",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "ttime_start",
+        "sas_type": "numeric",
+        "polars_type": "Float64",
+        "nullable": true,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "tdate_end",
+        "sas_type": "numeric",
+        "polars_type": "Float64",
+        "nullable": true,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "ttime_end",
+        "sas_type": "numeric",
+        "polars_type": "Float64",
+        "nullable": true,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "enctype",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": true,
+        "nullable_condition": "",
+        "valid_values": [
+          "ED",
+          "IP",
+          "IS",
+          "OA"
+        ]
+      }
+    ]
+  },
+  "mother_infant_linkage": {
+    "sort_order": [
+      "MPatID",
+      "Adate",
+      "CPatID"
+    ],
+    "unique_row": [
+      "MPatID",
+      "EncounterID",
+      "CPatID"
+    ],
+    "columns": [
+      {
+        "name": "mpatid",
+        "sas_type": "numeric",
+        "polars_type": "Int64",
+        "nullable": true,
+        "nullable_condition": "Only for Infant records",
+        "valid_values": []
+      },
+      {
+        "name": "mbirth_date",
+        "sas_type": "numeric",
+        "polars_type": "Float64",
+        "nullable": true,
+        "nullable_condition": "Only for Infant records",
+        "valid_values": []
+      },
+      {
+        "name": "age",
+        "sas_type": "numeric",
+        "polars_type": "Int64",
+        "nullable": true,
+        "nullable_condition": "Only for Infant records",
+        "valid_values": []
+      },
+      {
+        "name": "encounterid",
+        "sas_type": "numeric",
+        "polars_type": "Int64",
+        "nullable": true,
+        "nullable_condition": "Only for Infant records",
+        "valid_values": []
+      },
+      {
+        "name": "enctype",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": true,
+        "nullable_condition": "Only for Infant records",
+        "valid_values": [
+          "AV",
+          "ED",
+          "IP",
+          "IS",
+          "OA"
+        ]
+      },
+      {
+        "name": "adate",
+        "sas_type": "numeric",
+        "polars_type": "Float64",
+        "nullable": true,
+        "nullable_condition": "Only for Infant records",
+        "valid_values": []
+      },
+      {
+        "name": "ddate",
+        "sas_type": "numeric",
+        "polars_type": "Float64",
+        "nullable": true,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "cpatid",
+        "sas_type": "numeric",
+        "polars_type": "Int64",
+        "nullable": true,
+        "nullable_condition": "Only for Mother records",
+        "valid_values": []
+      },
+      {
+        "name": "cbirth_date",
+        "sas_type": "numeric",
+        "polars_type": "Float64",
+        "nullable": true,
+        "nullable_condition": "Only for Mother records",
+        "valid_values": []
+      },
+      {
+        "name": "sex",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": true,
+        "nullable_condition": "Only for Mother records",
+        "valid_values": [
+          "A",
+          "F",
+          "M",
+          "U"
+        ]
+      },
+      {
+        "name": "cenr_start",
+        "sas_type": "numeric",
+        "polars_type": "Float64",
+        "nullable": true,
+        "nullable_condition": "Only for Mother records",
+        "valid_values": []
+      },
+      {
+        "name": "birth_type",
+        "sas_type": "numeric",
+        "polars_type": "Int32",
+        "nullable": true,
+        "nullable_condition": "Only for Infant records",
+        "valid_values": []
+      },
+      {
+        "name": "birth_type_primes",
+        "sas_type": "numeric",
+        "polars_type": "Int32",
+        "nullable": true,
+        "nullable_condition": "Only for Infant records",
+        "valid_values": []
+      },
+      {
+        "name": "matchmethod",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": [
+          "BC",
+          "RE",
+          "SI",
+          "LA",
+          "OT",
+          "N1",
+          "N2",
+          "N3",
+          "NA"
+        ]
+      }
+    ]
+  },
+  "prescribing": {
+    "sort_order": [
+      "PatID",
+      "OrderDate"
+    ],
+    "unique_row": [
+      "PrescribingID"
+    ],
+    "columns": [
+      {
+        "name": "patid",
+        "sas_type": "numeric",
+        "polars_type": "Int64",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "encounterid",
+        "sas_type": "numeric",
+        "polars_type": "Int64",
+        "nullable": true,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "prescribingid",
+        "sas_type": "numeric",
+        "polars_type": "Int64",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "providerid",
+        "sas_type": "numeric",
+        "polars_type": "Int64",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "orderdate",
+        "sas_type": "numeric",
+        "polars_type": "Float64",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "rx_codetype",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": [
+          "ND",
+          "SN",
+          "SK",
+          "DM",
+          "DI",
+          "RN",
+          "AT",
+          "GP"
+        ]
+      },
+      {
+        "name": "rx",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "rxamt",
+        "sas_type": "numeric",
+        "polars_type": "Int32",
+        "nullable": true,
+        "nullable_condition": "special_missing",
+        "valid_values": []
+      },
+      {
+        "name": "rxsup",
+        "sas_type": "numeric",
+        "polars_type": "Int32",
+        "nullable": true,
+        "nullable_condition": "special_missing",
+        "valid_values": []
+      },
+      {
+        "name": "rxsource",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": [
+          "OD",
+          "DR",
+          "UN",
+          "OT"
+        ]
+      },
+      {
+        "name": "rxroute",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "rxdosequantity",
+        "sas_type": "numeric",
+        "polars_type": "Float64",
+        "nullable": true,
+        "nullable_condition": "special_missing",
+        "valid_values": []
+      },
+      {
+        "name": "rxdoseunit",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "rxdoseform",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": true,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "rxfreqquantity",
+        "sas_type": "numeric",
+        "polars_type": "Float64",
+        "nullable": true,
+        "nullable_condition": "Only SAS Special Missing .U allowed",
+        "valid_values": []
+      },
+      {
+        "name": "rxfrequnit",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": [
+          "D",
+          "W",
+          "M",
+          "O"
+        ]
+      },
+      {
+        "name": "rxrefills",
+        "sas_type": "numeric",
+        "polars_type": "Float64",
+        "nullable": true,
+        "nullable_condition": "special_missing",
+        "valid_values": []
+      },
+      {
+        "name": "rxprnflag",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": [
+          "Y",
+          "N",
+          "U"
+        ]
+      },
+      {
+        "name": "rxdaw",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": [
+          "Y",
+          "N",
+          "U",
+          "O"
+        ]
+      }
+    ]
+  },
+  "facility": {
+    "sort_order": [
+      "FacilityID"
+    ],
+    "unique_row": [
+      "FacilityID"
+    ],
+    "columns": [
+      {
+        "name": "facilityid",
+        "sas_type": "numeric",
+        "polars_type": "Int64",
+        "nullable": true,
+        "nullable_condition": "Only SAS Special Missing .U allowed",
+        "valid_values": []
+      },
+      {
+        "name": "facility_location",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": true,
+        "nullable_condition": "",
+        "valid_values": []
+      }
+    ]
+  },
+  "provider": {
+    "sort_order": [
+      "ProviderID"
+    ],
+    "unique_row": [
+      "ProviderID"
+    ],
+    "columns": [
+      {
+        "name": "providerid",
+        "sas_type": "numeric",
+        "polars_type": "Int64",
+        "nullable": true,
+        "nullable_condition": "Only SAS Special Missing .U allowed",
+        "valid_values": []
+      },
+      {
+        "name": "specialty",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "specialty_codetype",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": []
+      }
+    ]
+  },
+  "prm_survey": {
+    "sort_order": [
+      "PRM_Code",
+      "SurveyID",
+      "QuestionID",
+      "QuestionVerID"
+    ],
+    "unique_row": [
+      "PRM_Code",
+      "SurveyID",
+      "QuestionID",
+      "QuestionVerID"
+    ],
+    "columns": [
+      {
+        "name": "prm_code",
+        "sas_type": "numeric",
+        "polars_type": "Int64",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "surveyid",
+        "sas_type": "numeric",
+        "polars_type": "Int64",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "survey_name",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "survey_data_source",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": [
+          "FL",
+          "LO",
+          "SF",
+          "QU"
+        ]
+      },
+      {
+        "name": "questionid",
+        "sas_type": "numeric",
+        "polars_type": "Int64",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "questionverid",
+        "sas_type": "numeric",
+        "polars_type": "Int64",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "question_dt",
+        "sas_type": "numeric",
+        "polars_type": "Float64",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "question_text",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": []
+      }
+    ]
+  },
+  "prm_response": {
+    "sort_order": [
+      "PatID",
+      "PRM_Code",
+      "Response_Date",
+      "Response_Time"
+    ],
+    "unique_row": [],
+    "columns": [
+      {
+        "name": "patid",
+        "sas_type": "numeric",
+        "polars_type": "Int64",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "encounterid",
+        "sas_type": "numeric",
+        "polars_type": "Int64",
+        "nullable": true,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "prm_code",
+        "sas_type": "numeric",
+        "polars_type": "Int64",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "surveyid",
+        "sas_type": "numeric",
+        "polars_type": "Int64",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "questionid",
+        "sas_type": "numeric",
+        "polars_type": "Int64",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "questionverid",
+        "sas_type": "numeric",
+        "polars_type": "Int64",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "response_dt",
+        "sas_type": "numeric",
+        "polars_type": "Float64",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "response_tm",
+        "sas_type": "numeric",
+        "polars_type": "Float64",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "response_text",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "survey_mode",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": []
+      }
+    ]
+  },
+  "feature_engineering": {
+    "sort_order": [
+      "PatID"
+    ],
+    "unique_row": [
+      "FeatureID"
+    ],
+    "columns": [
+      {
+        "name": "patid",
+        "sas_type": "numeric",
+        "polars_type": "Int64",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "encounterid",
+        "sas_type": "numeric",
+        "polars_type": "Int64",
+        "nullable": true,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "featureid",
+        "sas_type": "numeric",
+        "polars_type": "Int64",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "feature_dt",
+        "sas_type": "numeric",
+        "polars_type": "Float64",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "feature",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "fe_codetype",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": [
+          "SM",
+          "MD",
+          "UC"
+        ]
+      },
+      {
+        "name": "providerid",
+        "sas_type": "numeric",
+        "polars_type": "Int64",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": []
+      },
+      {
+        "name": "confidence",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": [
+          "E",
+          "F",
+          "P",
+          "N"
+        ]
+      },
+      {
+        "name": "feature_status",
+        "sas_type": "character",
+        "polars_type": "String",
+        "nullable": false,
+        "nullable_condition": "",
+        "valid_values": [
+          "A",
+          "H",
+          "N",
+          "X",
+          "U"
+        ]
+      }
+    ]
+  }
+}

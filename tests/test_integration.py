@@ -63,21 +63,21 @@ def _write_all_data(spark, config: Config) -> None:
         config.input_paths.enrollment,
         [
             {
-                "patid": "P1",
+                "patid": 1,
                 "enr_start": date(2020, 1, 1),
                 "enr_end": date(2023, 12, 31),
                 "drugcov": "y",
                 "medcov": "y",
             },
             {
-                "patid": "P2",
+                "patid": 2,
                 "enr_start": date(2020, 6, 1),
                 "enr_end": date(2022, 6, 30),
                 "drugcov": "y",
                 "medcov": "y",
             },
             {
-                "patid": "P3",
+                "patid": 3,
                 "enr_start": date(2021, 1, 1),
                 "enr_end": date(2023, 12, 31),
                 "drugcov": "n",
@@ -90,51 +90,51 @@ def _write_all_data(spark, config: Config) -> None:
         config.input_paths.demographic,
         [
             {
-                "patid": "P1",
+                "patid": 1,
                 "birth_date": date(1990, 1, 1),
                 "sex": "M",
                 "race": "W",
                 "hispanic": "N",
             },
             {
-                "patid": "P2",
+                "patid": 2,
                 "birth_date": date(1985, 6, 15),
                 "sex": "F",
                 "race": "B",
                 "hispanic": "Y",
             },
-            {"patid": "P3", "birth_date": None, "sex": "M", "race": "A", "hispanic": "N"},
+            {"patid": 3, "birth_date": None, "sex": "M", "race": "A", "hispanic": "N"},
         ],
     )
     write_dispensing_parquet(
         spark,
         config.input_paths.dispensing,
         [
-            {"patid": "P1", "rxdate": date(2020, 3, 15)},
-            {"patid": "P2", "rxdate": date(2021, 1, 10)},
+            {"patid": 1, "rxdate": date(2020, 3, 15)},
+            {"patid": 2, "rxdate": date(2021, 1, 10)},
         ],
     )
     write_encounter_parquet(
         spark,
         config.input_paths.encounter,
         [
-            {"patid": "P1", "adate": date(2020, 5, 20)},
-            {"patid": "P3", "adate": date(2022, 3, 1)},
+            {"patid": 1, "adate": date(2020, 5, 20)},
+            {"patid": 3, "adate": date(2022, 3, 1)},
         ],
     )
     write_lab_parquet(
         spark,
         config.input_paths.lab,
         [
-            {"patid": "P1", "lab_dt": date(2020, 4, 1), "result_dt": None, "order_dt": None},
-            {"patid": "P2", "lab_dt": None, "result_dt": date(2021, 2, 15), "order_dt": None},
+            {"patid": 1, "lab_dt": date(2020, 4, 1), "result_dt": None, "order_dt": None},
+            {"patid": 2, "lab_dt": None, "result_dt": date(2021, 2, 15), "order_dt": None},
         ],
     )
     write_death_parquet(
         spark,
         config.input_paths.death,
         [
-            {"patid": "P2", "death_date": date(2022, 12, 1)},
+            {"patid": 2, "deathdt": date(2022, 12, 1)},
         ],
     )
     write_mil_parquet(
@@ -142,20 +142,20 @@ def _write_all_data(spark, config: Config) -> None:
         config.input_paths.mil,
         [
             {
-                "mpatid": "M01",
-                "encounterid": "E01",
-                "cpatid": "C01",
+                "mpatid": 1000001,
+                "encounterid": 1001,
+                "cpatid": 2000001,
                 "enctype": "D",
-                "birth_type": "V",
+                "birth_type": 1,
                 "age": 28,
                 "adate": date(2020, 6, 1),
             },
             {
-                "mpatid": "M02",
-                "encounterid": "E02",
+                "mpatid": 1000002,
+                "encounterid": 1002,
                 "cpatid": None,
                 "enctype": "L",
-                "birth_type": "C",
+                "birth_type": 2,
                 "age": 35,
                 "adate": date(2021, 3, 15),
             },
@@ -236,11 +236,11 @@ class TestMILOnlyExecution:
             config.input_paths.mil,
             [
                 {
-                    "mpatid": "M01",
-                    "encounterid": "E01",
-                    "cpatid": "C01",
+                    "mpatid": 1000001,
+                    "encounterid": 1001,
+                    "cpatid": 2000001,
                     "enctype": "D",
-                    "birth_type": "V",
+                    "birth_type": 1,
                     "age": 28,
                     "adate": date(2020, 6, 1),
                 },

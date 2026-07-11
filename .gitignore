@@ -31,5 +31,8 @@ spark-warehouse/
 output/
 benchmark_result.json
 
+# Agent session artifacts
+.polytoken/
+
 # OS
 .DS_Store

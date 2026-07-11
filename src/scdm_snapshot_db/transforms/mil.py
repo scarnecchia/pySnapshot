@@ -172,7 +172,7 @@ def mil_linkage_rates(mil_df: DataFrame, dp: str) -> DataFrame:
     )
     birth_rows = delivery_full.select(
         F.lit("birth_type").alias("variable"),
-        _null_to_missing(F.col("_birth_type")).alias("value"),
+        _null_to_missing(F.col("_birth_type").cast("string")).alias("value"),
         *base_cols,
     )
 

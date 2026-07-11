@@ -1,0 +1,9 @@
+Vendored from: scdm_convert/src/scdm_convert/scdm_schema.json
+Source repo: https://github.com/scarnecchia/scdm_convert (sibling repository)
+Last synced: 2026-07-10
+SHA-256: 72c0153e1bf97df27a0f5fd03a75bea1b88769117c9f969e50f5e8ab65b6070f
+
+This file is a snapshot of the canonical SCDM schema used by the scdm_convert
+polars-readstat pipeline. When the canonical schema is updated upstream, copy
+the new version to tests/data/scdm_schema.json, update the SHA-256 above, and
+re-run the contract tests.

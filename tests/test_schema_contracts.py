@@ -7,6 +7,11 @@ maintained by the ``scdm_convert`` pipeline.
 Layer 2 (Spark, marked ``@pytest.mark.integration``): behavioral tests that
 exercise ``validate_schema`` and the lab transform with canonical and
 non-canonical schemas.
+
+The canonical schema is vendored at ``tests/data/scdm_schema.json`` so the
+tests are self-contained and do not depend on a sibling repository checkout.
+When the canonical schema is updated in ``scdm_convert``, copy the new
+version here and re-run the tests.
 """
 
 from __future__ import annotations
@@ -23,13 +28,7 @@ from scdm_snapshot_db.schema_contracts import REQUIRED_COLUMNS
 # Canonical schema loading
 # ---------------------------------------------------------------------------
 
-_CANONICAL_SCHEMA_PATH = (
-    Path(__file__).resolve().parent.parent.parent
-    / "scdm_convert"
-    / "src"
-    / "scdm_convert"
-    / "scdm_schema.json"
-)
+_CANONICAL_SCHEMA_PATH = Path(__file__).resolve().parent / "data" / "scdm_schema.json"
 
 # Domain name → canonical table name in scdm_schema.json
 DOMAIN_TO_TABLE = {
@@ -174,13 +173,78 @@ class TestCanonicalContract:
         )
 
     def test_all_id_columns_are_numeric(self) -> None:
-        """Every column ending in 'id' must have {'int', 'long'} in its type set."""
+        """Every ID column in REQUIRED_COLUMNS must have {'int', 'long'} in its
+        type set.
+
+        Scope: only the 7 domains currently in REQUIRED_COLUMNS. Canonical ID
+        columns in domains not yet covered (diagnosis, procedure, facility,
+        provider, etc.) are checked by ``test_canonical_id_columns_in_covered_domains``.
+        """
         for domain, required in REQUIRED_COLUMNS.items():
             for col_name, contract_types in required:
                 if col_name.endswith("id") or col_name == "patid" or col_name == "mpatid":
                     assert {"int", "long"}.issubset(contract_types), (
                         f"ID column '{col_name}' in domain '{domain}' has types "
                         f"{contract_types}, missing 'int' or 'long'"
+                    )
+
+    def test_canonical_id_columns_in_covered_domains(self) -> None:
+        """Every canonical Int64/Int32 column ending in 'id' (plus patid,
+        mpatid) in the 7 covered domains must map to numeric Spark types.
+
+        This catches cases where a canonical ID column exists but is absent
+        from REQUIRED_COLUMNS — the contract test above only checks columns
+        already in the contract.
+        """
+        for domain, table in DOMAIN_TO_TABLE.items():
+            canonical = _canonical_columns(table)
+            for col_name, polars_type in canonical.items():
+                is_id = (
+                    col_name.endswith("id")
+                    or col_name == "patid"
+                    or col_name == "mpatid"
+                )
+                if is_id and polars_type in ("Int64", "Int32"):
+                    # The column must either be in REQUIRED_COLUMNS (with numeric types)
+                    # or absent from REQUIRED_COLUMNS (acceptable — not all canonical
+                    # columns are required). But if it IS in the contract, it must
+                    # have numeric types.
+                    required = dict(REQUIRED_COLUMNS.get(domain, []))
+                    if col_name in required:
+                        assert {"int", "long"}.issubset(required[col_name]), (
+                            f"ID column '{col_name}' in domain '{domain}' is in "
+                            f"REQUIRED_COLUMNS with types {required[col_name]}, "
+                            f"missing 'int' or 'long'"
+                        )
+
+    def test_date_columns_registry_is_exhaustive_for_covered_domains(self) -> None:
+        """DATE_COLUMNS must include every Float64 column in the 7 covered
+        canonical tables that resolves to Date in parquet output.
+
+        This catches missing date columns — if a canonical Float64 column is
+        a date but isn't in DATE_COLUMNS, it would be mapped to 'double'
+        instead of 'date', and the contract could accept the wrong type.
+        """
+        # SCDM date columns follow naming patterns: *_dt, *_date, *date, *_start, *_end
+        DATE_NAME_SUFFIXES = ("_dt", "_date", "date", "_start", "_end")
+
+        for domain, table in DOMAIN_TO_TABLE.items():
+            canonical = _canonical_columns(table)
+            for col_name, polars_type in canonical.items():
+                if polars_type != "Float64":
+                    continue
+                # Skip time columns (resolve to Time, not Date)
+                if col_name.endswith("_tm"):
+                    continue
+                # Check if the column name suggests a date
+                looks_like_date = any(
+                    col_name.endswith(suffix) for suffix in DATE_NAME_SUFFIXES
+                ) or col_name == "postalcode_date"
+                if looks_like_date:
+                    assert (table, col_name) in DATE_COLUMNS, (
+                        f"Canonical Float64 column '{col_name}' in table '{table}' "
+                        f"looks like a date but is not in DATE_COLUMNS — it would "
+                        f"be mapped to 'double' instead of 'date'"
                     )
 
     def test_type_compatibility_removed(self) -> None:

@@ -79,10 +79,12 @@ DATE_COLUMNS: set[tuple[str, str]] = {
 
 # Intentional supersets: contract type sets that are deliberately wider than
 # the canonical type. Keyed by (domain, column) → set of extra Spark types.
+# This must be EXHAUSTIVE — test_no_undocumented_supersets verifies that
+# every extra type in every contract column is listed here.
 INTENTIONAL_SUPERSETS: dict[tuple[str, str], set[str]] = {
-    ("lab", "lab_dt"): {"string"},
-    ("lab", "result_dt"): {"string"},
-    ("lab", "order_dt"): {"string"},
+    ("lab", "lab_dt"): {"string", "timestamp"},
+    ("lab", "result_dt"): {"string", "timestamp"},
+    ("lab", "order_dt"): {"string", "timestamp"},
     ("mil", "birth_type"): {"long"},  # canonical Int32 → {"int"}, contract adds {"long"}
     ("mil", "age"): {"double", "decimal"},  # canonical Int64 → {"int","long"}, contract adds wider numeric
 }
@@ -189,13 +191,25 @@ class TestCanonicalContract:
                     )
 
     def test_canonical_id_columns_in_covered_domains(self) -> None:
-        """Every canonical Int64/Int32 column ending in 'id' (plus patid,
-        mpatid) in the 7 covered domains must map to numeric Spark types.
+        """Every canonical Int64/Int32 ID column in the 7 covered domains must
+        either be present in REQUIRED_COLUMNS (with numeric types) or be
+        listed in OPTIONAL_CANONICAL_IDS (explicitly acknowledged as not required).
 
-        This catches cases where a canonical ID column exists but is absent
-        from REQUIRED_COLUMNS — the contract test above only checks columns
-        already in the contract.
+        This prevents silent omission of ID columns from the contract — if a
+        new ID column is added to the canonical schema, this test will fail
+        until it is either added to REQUIRED_COLUMNS or explicitly allowlisted.
         """
+        # Canonical ID columns intentionally not required in the contract.
+        # These exist in the canonical schema but are not needed by any
+        # current transform. New additions must be reviewed.
+        OPTIONAL_CANONICAL_IDS: set[tuple[str, str]] = {
+            ("dispensing", "providerid"),
+            ("encounter", "encounterid"),
+            ("encounter", "facilityid"),
+            ("laboratory_result", "labid"),
+            ("laboratory_result", "facilityid"),
+        }
+
         for domain, table in DOMAIN_TO_TABLE.items():
             canonical = _canonical_columns(table)
             for col_name, polars_type in canonical.items():
@@ -205,10 +219,6 @@ class TestCanonicalContract:
                     or col_name == "mpatid"
                 )
                 if is_id and polars_type in ("Int64", "Int32"):
-                    # The column must either be in REQUIRED_COLUMNS (with numeric types)
-                    # or absent from REQUIRED_COLUMNS (acceptable — not all canonical
-                    # columns are required). But if it IS in the contract, it must
-                    # have numeric types.
                     required = dict(REQUIRED_COLUMNS.get(domain, []))
                     if col_name in required:
                         assert {"int", "long"}.issubset(required[col_name]), (
@@ -216,16 +226,49 @@ class TestCanonicalContract:
                             f"REQUIRED_COLUMNS with types {required[col_name]}, "
                             f"missing 'int' or 'long'"
                         )
+                    else:
+                        assert (table, col_name) in OPTIONAL_CANONICAL_IDS, (
+                            f"Canonical ID column '{col_name}' in table '{table}' "
+                            f"(domain '{domain}') is not in REQUIRED_COLUMNS and not "
+                            f"in OPTIONAL_CANONICAL_IDS — either add it to the contract "
+                            f"or explicitly allowlist it"
+                        )
+
+    def test_no_undocumented_supersets(self) -> None:
+        """Every extra type in a contract column (beyond the canonical Spark
+        types) must be documented in INTENTIONAL_SUPERSETS.
+
+        This prevents silent relaxation — if someone adds 'string' or 'double'
+        to a contract type set, this test fails until the superset is documented.
+        """
+        for domain, required in REQUIRED_COLUMNS.items():
+            table = DOMAIN_TO_TABLE[domain]
+            canonical = _canonical_columns(table)
+            for col_name, contract_types in required:
+                polars_type = canonical.get(col_name)
+                if polars_type is None:
+                    continue  # column not in canonical — other tests catch this
+                expected_types = _polars_to_spark_types(table, col_name, polars_type)
+                extras = contract_types - expected_types
+                documented_extras = INTENTIONAL_SUPERSETS.get((domain, col_name), set())
+                assert extras == documented_extras, (
+                    f"Column '{col_name}' in domain '{domain}' has undocumented "
+                    f"superset: contract types {sorted(contract_types)}, canonical "
+                    f"{sorted(expected_types)}, extras {sorted(extras)}, documented "
+                    f"extras {sorted(documented_extras)}"
+                )
 
     def test_date_columns_registry_is_exhaustive_for_covered_domains(self) -> None:
         """DATE_COLUMNS must include every Float64 column in the 7 covered
-        canonical tables that resolves to Date in parquet output.
+        canonical tables whose name matches a date-like pattern.
 
-        This catches missing date columns — if a canonical Float64 column is
-        a date but isn't in DATE_COLUMNS, it would be mapped to 'double'
-        instead of 'date', and the contract could accept the wrong type.
+        Note: this uses a naming heuristic (suffixes like _dt, _date, *date,
+        _start, _end) to identify candidate date columns. It is not a semantic
+        oracle — it catches newly added date-like columns but may miss dates
+        with non-standard names. The manual DATE_COLUMNS set remains the
+        authoritative source; this test guards against omission for the
+        common naming patterns.
         """
-        # SCDM date columns follow naming patterns: *_dt, *_date, *date, *_start, *_end
         DATE_NAME_SUFFIXES = ("_dt", "_date", "date", "_start", "_end")
 
         for domain, table in DOMAIN_TO_TABLE.items():
@@ -256,19 +299,15 @@ class TestCanonicalContract:
             "TYPE_COMPATIBILITY should have been removed from __all__"
         )
 
-    def test_intentional_supersets_are_documented(self) -> None:
-        """Verify that intentional supersets actually exist in REQUIRED_COLUMNS
-        and contain the extra types claimed."""
+    def test_intentional_supersets_exist_in_contract(self) -> None:
+        """Every entry in INTENTIONAL_SUPERSETS must reference a column that
+        actually exists in REQUIRED_COLUMNS."""
         for (domain, col_name), extra_types in INTENTIONAL_SUPERSETS.items():
             required = REQUIRED_COLUMNS.get(domain, [])
             col_dict = dict(required)
             assert col_name in col_dict, (
-                f"Intentional superset references '{col_name}' in domain '{domain}' "
-                f"but column not found"
-            )
-            assert extra_types.issubset(col_dict[col_name]), (
-                f"Intentional superset for ('{domain}', '{col_name}') claims extra "
-                f"types {extra_types} but contract types are {col_dict[col_name]}"
+                f"INTENTIONAL_SUPERSETS references '{col_name}' in domain "
+                f"'{domain}' but column not found in REQUIRED_COLUMNS"
             )
 
 

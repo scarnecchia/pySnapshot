@@ -13,6 +13,7 @@ from pyspark.sql import SparkSession
 from pyspark.sql.types import (
     DateType,
     IntegerType,
+    LongType,
     StringType,
     StructField,
     StructType,
@@ -40,7 +41,7 @@ __all__ = [
 
 ENROLLMENT_SCHEMA = StructType(
     [
-        StructField("patid", StringType(), False),
+        StructField("patid", LongType(), False),
         StructField("enr_start", DateType(), False),
         StructField("enr_end", DateType(), False),
         StructField("drugcov", StringType(), True),
@@ -50,7 +51,7 @@ ENROLLMENT_SCHEMA = StructType(
 
 DEMOGRAPHIC_SCHEMA = StructType(
     [
-        StructField("patid", StringType(), False),
+        StructField("patid", LongType(), False),
         StructField("birth_date", DateType(), True),
         StructField("sex", StringType(), True),
         StructField("race", StringType(), True),
@@ -60,21 +61,21 @@ DEMOGRAPHIC_SCHEMA = StructType(
 
 DISPENSING_SCHEMA = StructType(
     [
-        StructField("patid", StringType(), False),
+        StructField("patid", LongType(), False),
         StructField("rxdate", DateType(), True),
     ]
 )
 
 ENCOUNTER_SCHEMA = StructType(
     [
-        StructField("patid", StringType(), False),
+        StructField("patid", LongType(), False),
         StructField("adate", DateType(), True),
     ]
 )
 
 LAB_SCHEMA = StructType(
     [
-        StructField("patid", StringType(), False),
+        StructField("patid", LongType(), False),
         StructField("lab_dt", DateType(), True),
         StructField("result_dt", DateType(), True),
         StructField("order_dt", DateType(), True),
@@ -83,18 +84,18 @@ LAB_SCHEMA = StructType(
 
 DEATH_SCHEMA = StructType(
     [
-        StructField("patid", StringType(), False),
-        StructField("death_date", DateType(), True),
+        StructField("patid", LongType(), False),
+        StructField("deathdt", DateType(), True),
     ]
 )
 
 MIL_SCHEMA = StructType(
     [
-        StructField("mpatid", StringType(), True),
-        StructField("encounterid", StringType(), True),
-        StructField("cpatid", StringType(), True),
+        StructField("mpatid", LongType(), True),
+        StructField("encounterid", LongType(), True),
+        StructField("cpatid", LongType(), True),
         StructField("enctype", StringType(), True),
-        StructField("birth_type", StringType(), True),
+        StructField("birth_type", IntegerType(), True),
         StructField("age", IntegerType(), True),
         StructField("adate", DateType(), True),
     ]

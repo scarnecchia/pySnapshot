@@ -9,6 +9,7 @@ import pytest
 pytestmark = pytest.mark.integration
 
 from pyspark.sql.types import (
+    LongType,
     DateType,
     IntegerType,
     StringType,
@@ -26,7 +27,7 @@ def _make_df(spark, schema, rows):
 class TestDemographicAgeBoundaries:
     DEM_SCHEMA = StructType(
         [
-            StructField("patid", StringType(), False),
+            StructField("patid", LongType(), False),
             StructField("birth_date", DateType(), True),
             StructField("sex", StringType(), True),
             StructField("race", StringType(), True),
@@ -36,7 +37,7 @@ class TestDemographicAgeBoundaries:
 
     ENR_SCHEMA = StructType(
         [
-            StructField("patid", StringType(), False),
+            StructField("patid", LongType(), False),
             StructField("_enr_start", DateType(), False),
             StructField("_enr_end", DateType(), False),
             StructField("_span_id", IntegerType(), False),
@@ -50,7 +51,7 @@ class TestDemographicAgeBoundaries:
             self.ENR_SCHEMA,
             [
                 {
-                    "patid": "P1",
+                    "patid": 1,
                     "_enr_start": date(2000, 1, 1),
                     "_enr_end": date(2023, 12, 31),
                     "_span_id": 1,
@@ -62,7 +63,7 @@ class TestDemographicAgeBoundaries:
             self.DEM_SCHEMA,
             [
                 {
-                    "patid": "P1",
+                    "patid": 1,
                     "birth_date": date(1920, 1, 1),
                     "sex": "M",
                     "race": "W",
@@ -83,7 +84,7 @@ class TestDemographicAgeBoundaries:
             self.ENR_SCHEMA,
             [
                 {
-                    "patid": "P1",
+                    "patid": 1,
                     "_enr_start": date(2020, 1, 1),
                     "_enr_end": date(2023, 12, 31),
                     "_span_id": 1,
@@ -94,7 +95,7 @@ class TestDemographicAgeBoundaries:
             spark,
             self.DEM_SCHEMA,
             [
-                {"patid": "P1", "birth_date": None, "sex": "M", "race": "W", "hispanic": "N"},
+                {"patid": 1, "birth_date": None, "sex": "M", "race": "W", "hispanic": "N"},
             ],
         )
         result = demographic.dem_pat_lstagecount_md(
@@ -110,7 +111,7 @@ class TestDemographicAgeBoundaries:
             self.ENR_SCHEMA,
             [
                 {
-                    "patid": "P1",
+                    "patid": 1,
                     "_enr_start": date(2020, 2, 29),
                     "_enr_end": date(2023, 12, 31),
                     "_span_id": 1,
@@ -122,7 +123,7 @@ class TestDemographicAgeBoundaries:
             self.DEM_SCHEMA,
             [
                 {
-                    "patid": "P1",
+                    "patid": 1,
                     "birth_date": date(2000, 2, 29),
                     "sex": "F",
                     "race": "B",
@@ -145,7 +146,7 @@ class TestDemographicAgeBoundaries:
             self.ENR_SCHEMA,
             [
                 {
-                    "patid": "P1",
+                    "patid": 1,
                     "_enr_start": date(2022, 1, 1),
                     "_enr_end": date(2022, 6, 30),
                     "_span_id": 1,
@@ -157,7 +158,7 @@ class TestDemographicAgeBoundaries:
             self.DEM_SCHEMA,
             [
                 {
-                    "patid": "P1",
+                    "patid": 1,
                     "birth_date": date(2000, 1, 1),
                     "sex": "M",
                     "race": "W",
@@ -175,7 +176,7 @@ class TestDemographicAgeBoundaries:
             self.ENR_SCHEMA,
             [
                 {
-                    "patid": "P1",
+                    "patid": 1,
                     "_enr_start": date(2022, 1, 1),
                     "_enr_end": date(2023, 12, 31),
                     "_span_id": 1,
@@ -190,10 +191,10 @@ class TestDemographicAgeBoundaries:
 
         distinct_md = _make_df(
             spark,
-            StructType([StructField("patid", StringType(), False)]),
+            StructType([StructField("patid", LongType(), False)]),
             [
-                {"patid": "P1"},
-                {"patid": "P2"},
+                {"patid": 1},
+                {"patid": 2},
             ],
         )
         dem = _make_df(
@@ -201,14 +202,14 @@ class TestDemographicAgeBoundaries:
             self.DEM_SCHEMA,
             [
                 {
-                    "patid": "P1",
+                    "patid": 1,
                     "birth_date": date(2000, 1, 1),
                     "sex": "M",
                     "race": "W",
                     "hispanic": "N",
                 },
                 {
-                    "patid": "P2",
+                    "patid": 2,
                     "birth_date": date(2001, 1, 1),
                     "sex": "F",
                     "race": "B",
@@ -229,7 +230,7 @@ class TestDemographicAgeBoundaries:
 class TestDispensingIntervalCounts:
     ENR_SCHEMA = StructType(
         [
-            StructField("patid", StringType(), False),
+            StructField("patid", LongType(), False),
             StructField("_enr_start", DateType(), False),
             StructField("_enr_end", DateType(), False),
             StructField("_span_id", IntegerType(), False),
@@ -243,7 +244,7 @@ class TestDispensingIntervalCounts:
             self.ENR_SCHEMA,
             [
                 {
-                    "patid": "P1",
+                    "patid": 1,
                     "_enr_start": date(2020, 1, 1),
                     "_enr_end": date(2020, 6, 30),
                     "_span_id": 1,
@@ -252,7 +253,7 @@ class TestDispensingIntervalCounts:
         )
         dis_schema = StructType(
             [
-                StructField("patid", StringType(), False),
+                StructField("patid", LongType(), False),
                 StructField("rxdate", DateType(), True),
             ]
         )
@@ -260,8 +261,8 @@ class TestDispensingIntervalCounts:
             spark,
             dis_schema,
             [
-                {"patid": "P1", "rxdate": date(2020, 3, 15)},  # in window
-                {"patid": "P1", "rxdate": date(2021, 1, 15)},  # out of window
+                {"patid": 1, "rxdate": date(2020, 3, 15)},  # in window
+                {"patid": 1, "rxdate": date(2021, 1, 15)},  # out of window
             ],
         )
         result = dispensing.dis_pat_rx_md(dis, bridged, "TEST").collect()
@@ -276,13 +277,13 @@ class TestDispensingIntervalCounts:
             self.ENR_SCHEMA,
             [
                 {
-                    "patid": "P1",
+                    "patid": 1,
                     "_enr_start": date(2020, 1, 1),
                     "_enr_end": date(2020, 3, 31),
                     "_span_id": 1,
                 },
                 {
-                    "patid": "P1",
+                    "patid": 1,
                     "_enr_start": date(2020, 6, 1),
                     "_enr_end": date(2020, 9, 30),
                     "_span_id": 2,
@@ -291,7 +292,7 @@ class TestDispensingIntervalCounts:
         )
         dis_schema = StructType(
             [
-                StructField("patid", StringType(), False),
+                StructField("patid", LongType(), False),
                 StructField("rxdate", DateType(), True),
             ]
         )
@@ -299,8 +300,8 @@ class TestDispensingIntervalCounts:
             spark,
             dis_schema,
             [
-                {"patid": "P1", "rxdate": date(2020, 2, 15)},  # in span 1
-                {"patid": "P1", "rxdate": date(2020, 7, 15)},  # in span 2
+                {"patid": 1, "rxdate": date(2020, 2, 15)},  # in span 1
+                {"patid": 1, "rxdate": date(2020, 7, 15)},  # in span 2
             ],
         )
         result = dispensing.dis_pat_rx_md(dis, bridged, "TEST").collect()
@@ -311,7 +312,7 @@ class TestEncounterIntervalCounts:
     def test_encounter_interval_counts(self, spark) -> None:
         enr_schema = StructType(
             [
-                StructField("patid", StringType(), False),
+                StructField("patid", LongType(), False),
                 StructField("_enr_start", DateType(), False),
                 StructField("_enr_end", DateType(), False),
                 StructField("_span_id", IntegerType(), False),
@@ -322,7 +323,7 @@ class TestEncounterIntervalCounts:
             enr_schema,
             [
                 {
-                    "patid": "P1",
+                    "patid": 1,
                     "_enr_start": date(2020, 1, 1),
                     "_enr_end": date(2020, 6, 30),
                     "_span_id": 1,
@@ -331,7 +332,7 @@ class TestEncounterIntervalCounts:
         )
         enc_schema = StructType(
             [
-                StructField("patid", StringType(), False),
+                StructField("patid", LongType(), False),
                 StructField("adate", DateType(), True),
             ]
         )
@@ -339,8 +340,8 @@ class TestEncounterIntervalCounts:
             spark,
             enc_schema,
             [
-                {"patid": "P1", "adate": date(2020, 3, 15)},
-                {"patid": "P1", "adate": date(2020, 4, 20)},
+                {"patid": 1, "adate": date(2020, 3, 15)},
+                {"patid": 1, "adate": date(2020, 4, 20)},
             ],
         )
         result = encounter.enc_pat_enccount_md(enc, bridged, "TEST").collect()
@@ -351,7 +352,7 @@ class TestEncounterIntervalCounts:
 class TestLabDatePrecedence:
     LAB_SCHEMA = StructType(
         [
-            StructField("patid", StringType(), False),
+            StructField("patid", LongType(), False),
             StructField("lab_dt", DateType(), True),
             StructField("result_dt", DateType(), True),
             StructField("order_dt", DateType(), True),
@@ -359,7 +360,7 @@ class TestLabDatePrecedence:
     )
     ENR_SCHEMA = StructType(
         [
-            StructField("patid", StringType(), False),
+            StructField("patid", LongType(), False),
             StructField("_enr_start", DateType(), False),
             StructField("_enr_end", DateType(), False),
             StructField("_span_id", IntegerType(), False),
@@ -373,7 +374,7 @@ class TestLabDatePrecedence:
             self.ENR_SCHEMA,
             [
                 {
-                    "patid": "P1",
+                    "patid": 1,
                     "_enr_start": date(2020, 1, 1),
                     "_enr_end": date(2020, 12, 31),
                     "_span_id": 1,
@@ -385,18 +386,18 @@ class TestLabDatePrecedence:
             self.LAB_SCHEMA,
             [
                 {
-                    "patid": "P1",
+                    "patid": 1,
                     "lab_dt": date(2020, 3, 15),
                     "result_dt": date(2020, 3, 20),
                     "order_dt": date(2020, 3, 10),
                 },
                 {
-                    "patid": "P1",
+                    "patid": 1,
                     "lab_dt": None,
                     "result_dt": date(2020, 4, 10),
                     "order_dt": date(2020, 4, 5),
                 },
-                {"patid": "P1", "lab_dt": None, "result_dt": None, "order_dt": date(2020, 5, 1)},
+                {"patid": 1, "lab_dt": None, "result_dt": None, "order_dt": date(2020, 5, 1)},
             ],
         )
         result = lab.lab_pat_testct_md(lab, bridged, "TEST").collect()
@@ -411,20 +412,20 @@ class TestDeathDistinctMembership:
 
         distinct_patids = _make_df(
             spark,
-            StructType([StructField("patid", StringType(), False)]),
-            [{"patid": "P1"}],
+            StructType([StructField("patid", LongType(), False)]),
+            [{"patid": 1}],
         )
         death_schema = StructType(
             [
-                StructField("patid", StringType(), False),
-                StructField("death_date", DateType(), True),
+                StructField("patid", LongType(), False),
+                StructField("deathdt", DateType(), True),
             ]
         )
         death_df = _make_df(
             spark,
             death_schema,
             [
-                {"patid": "P1", "death_date": date(2021, 1, 1)},
+                {"patid": 1, "deathdt": date(2021, 1, 1)},
             ],
         )
         result = death.dth_dthct_md(death_df, distinct_patids, "TEST").collect()

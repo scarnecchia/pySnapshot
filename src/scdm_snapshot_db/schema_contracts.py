@@ -3,6 +3,18 @@
 
 All functions accept ``StructType`` metadata and return ``list[str]`` findings
 or raise ``SchemaError``. No Spark actions, no IO.
+
+Type rationale (informed by the ``scdm_convert`` polars-readstat pipeline):
+
+- **Date columns** accept only ``{"date"}`` because polars-readstat resolves
+  SAS date-formatted numerics (canonical ``Float64``) to ``Date`` in the
+  parquet output. If a date arrives as ``DoubleType`` the SAS file lacked
+  the date format and validation should catch it, not silently pass it.
+- **Lab date columns** additionally accept ``{"string"}`` because the lab
+  transform uses ``F.to_date()`` which parses ISO date strings. Malformed
+  strings become null and are filtered downstream.
+- **ID columns** accept ``{"int", "long"}`` matching the ``Int64`` polars
+  type in the canonical ``scdm_schema.json`` registry.
 """
 
 from __future__ import annotations
@@ -16,7 +28,6 @@ if TYPE_CHECKING:
 
 __all__ = [
     "REQUIRED_COLUMNS",
-    "TYPE_COMPATIBILITY",
     "check_required_columns",
     "check_type_compatibility",
     "validate_schema",
@@ -26,60 +37,46 @@ __all__ = [
 # Required columns per domain
 REQUIRED_COLUMNS: dict[str, list[tuple[str, set[str]]]] = {
     "enrollment": [
-        ("patid", {"string"}),
+        ("patid", {"int", "long"}),
         ("enr_start", {"date"}),
         ("enr_end", {"date"}),
         ("drugcov", {"string"}),
         ("medcov", {"string"}),
     ],
     "demographic": [
-        ("patid", {"string"}),
+        ("patid", {"int", "long"}),
         ("birth_date", {"date"}),
         ("sex", {"string"}),
         ("race", {"string"}),
         ("hispanic", {"string"}),
     ],
     "dispensing": [
-        ("patid", {"string"}),
+        ("patid", {"int", "long"}),
         ("rxdate", {"date"}),
     ],
     "encounter": [
-        ("patid", {"string"}),
+        ("patid", {"int", "long"}),
         ("adate", {"date"}),
     ],
     "lab": [
-        ("patid", {"string"}),
-        ("lab_dt", {"date", "timestamp"}),
-        ("result_dt", {"date", "timestamp"}),
-        ("order_dt", {"date", "timestamp"}),
+        ("patid", {"int", "long"}),
+        ("lab_dt", {"date", "timestamp", "string"}),
+        ("result_dt", {"date", "timestamp", "string"}),
+        ("order_dt", {"date", "timestamp", "string"}),
     ],
     "death": [
-        ("patid", {"string"}),
+        ("patid", {"int", "long"}),
+        ("deathdt", {"date"}),
     ],
     "mil": [
-        ("mpatid", {"string"}),
-        ("encounterid", {"string"}),
-        ("cpatid", {"string"}),
+        ("mpatid", {"int", "long"}),
+        ("encounterid", {"int", "long"}),
+        ("cpatid", {"int", "long"}),
         ("enctype", {"string"}),
-        ("birth_type", {"string"}),
+        ("birth_type", {"int", "long"}),
         ("age", {"int", "long", "double", "decimal"}),
         ("adate", {"date"}),
     ],
-}
-
-# Column → set of acceptable Spark type names. An empty set means any type is OK.
-TYPE_COMPATIBILITY: dict[str, set[str]] = {
-    "patid": {"string"},
-    "enr_start": {"date"},
-    "enr_end": {"date"},
-    "drugcov": {"string"},
-    "medcov": {"string"},
-    "birth_date": {"date"},
-    "sex": {"string"},
-    "race": {"string"},
-    "hispanic": {"string"},
-    "rxdate": {"date"},
-    "adate": {"date"},
 }
 
 
@@ -110,9 +107,6 @@ def check_type_compatibility(
         if col_name not in fields:
             continue  # missing columns handled by check_required_columns
         actual = fields[col_name].dataType.typeName()
-        # For lab columns that accept timestamp or date, also accept string
-        if domain == "lab" and col_name in ("lab_dt", "result_dt", "order_dt"):
-            acceptable_types = acceptable_types | {"string"}
         if acceptable_types and actual not in acceptable_types:
             findings.append(
                 f"column '{col_name}' has type '{actual}', expected one of "

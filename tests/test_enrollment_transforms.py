@@ -8,7 +8,7 @@ import pytest
 
 pytestmark = pytest.mark.integration
 
-from pyspark.sql.types import DateType, StringType, StructField, StructType
+from pyspark.sql.types import DateType, LongType, StringType, StructField, StructType
 
 from scdm_snapshot_db.transforms import enrollment
 
@@ -17,7 +17,7 @@ def _make_enrollment_df(spark, rows):
     """Create an enrollment DataFrame from a list of dicts."""
     schema = StructType(
         [
-            StructField("patid", StringType(), False),
+            StructField("patid", LongType(), False),
             StructField("enr_start", DateType(), False),
             StructField("enr_end", DateType(), False),
             StructField("drugcov", StringType(), True),
@@ -32,21 +32,21 @@ class TestIntervalBridging:
         """Nested intervals should be bridged correctly."""
         rows = [
             {
-                "patid": "P1",
+                "patid": 1,
                 "enr_start": date(2020, 1, 1),
                 "enr_end": date(2020, 12, 31),
                 "drugcov": "y",
                 "medcov": "y",
             },
             {
-                "patid": "P1",
+                "patid": 1,
                 "enr_start": date(2020, 3, 1),
                 "enr_end": date(2020, 6, 30),
                 "drugcov": "y",
                 "medcov": "y",
             },
             {
-                "patid": "P1",
+                "patid": 1,
                 "enr_start": date(2020, 7, 1),
                 "enr_end": date(2020, 9, 30),
                 "drugcov": "y",
@@ -58,7 +58,7 @@ class TestIntervalBridging:
         result = bridged.collect()
         # All three intervals are within 46 days of each other → 1 span
         assert len(result) == 1
-        assert result[0]["patid"] == "P1"
+        assert result[0]["patid"] == 1
         assert result[0]["_enr_start"] == date(2020, 1, 1)
         assert result[0]["_enr_end"] == date(2020, 12, 31)
 
@@ -67,14 +67,14 @@ class TestIntervalBridging:
         # Gap of 46 days: end=Jan 1, start=Feb 16 → 46 days → bridge
         rows_bridge = [
             {
-                "patid": "P1",
+                "patid": 1,
                 "enr_start": date(2020, 1, 1),
                 "enr_end": date(2020, 1, 1),
                 "drugcov": "y",
                 "medcov": "y",
             },
             {
-                "patid": "P1",
+                "patid": 1,
                 "enr_start": date(2020, 2, 16),
                 "enr_end": date(2020, 3, 1),
                 "drugcov": "y",
@@ -89,14 +89,14 @@ class TestIntervalBridging:
         # Gap of 47 days: end=Jan 1, start=Feb 17 → 47 days → separate
         rows_separate = [
             {
-                "patid": "P2",
+                "patid": 2,
                 "enr_start": date(2020, 1, 1),
                 "enr_end": date(2020, 1, 1),
                 "drugcov": "y",
                 "medcov": "y",
             },
             {
-                "patid": "P2",
+                "patid": 2,
                 "enr_start": date(2020, 2, 17),
                 "enr_end": date(2020, 3, 1),
                 "drugcov": "y",
@@ -112,14 +112,14 @@ class TestIntervalBridging:
         """Duplicate intervals should be deduplicated; ties handled deterministically."""
         rows = [
             {
-                "patid": "P1",
+                "patid": 1,
                 "enr_start": date(2020, 1, 1),
                 "enr_end": date(2020, 1, 31),
                 "drugcov": "y",
                 "medcov": "y",
             },
             {
-                "patid": "P1",
+                "patid": 1,
                 "enr_start": date(2020, 1, 1),
                 "enr_end": date(2020, 1, 31),
                 "drugcov": "y",
@@ -135,21 +135,21 @@ class TestIntervalBridging:
         """Bridging should produce the same result regardless of input row order."""
         base_rows = [
             {
-                "patid": "P1",
+                "patid": 1,
                 "enr_start": date(2020, 3, 1),
                 "enr_end": date(2020, 3, 31),
                 "drugcov": "y",
                 "medcov": "y",
             },
             {
-                "patid": "P1",
+                "patid": 1,
                 "enr_start": date(2020, 1, 1),
                 "enr_end": date(2020, 1, 31),
                 "drugcov": "y",
                 "medcov": "y",
             },
             {
-                "patid": "P1",
+                "patid": 1,
                 "enr_start": date(2020, 2, 1),
                 "enr_end": date(2020, 2, 28),
                 "drugcov": "y",
@@ -178,14 +178,14 @@ class TestIntervalBridging:
         """Every valid source interval must be covered by a bridged span."""
         rows = [
             {
-                "patid": "P1",
+                "patid": 1,
                 "enr_start": date(2020, 1, 1),
                 "enr_end": date(2020, 3, 31),
                 "drugcov": "y",
                 "medcov": "y",
             },
             {
-                "patid": "P1",
+                "patid": 1,
                 "enr_start": date(2020, 6, 1),
                 "enr_end": date(2020, 8, 31),
                 "drugcov": "y",
@@ -205,7 +205,7 @@ class TestIntervalBridging:
         """A single-day span should have inclusive duration of 1 day."""
         rows = [
             {
-                "patid": "P1",
+                "patid": 1,
                 "enr_start": date(2020, 6, 15),
                 "enr_end": date(2020, 6, 15),
                 "drugcov": "y",
@@ -226,21 +226,21 @@ class TestIntervalBridging:
         """Five enrollment outputs produce correct corrected results."""
         rows = [
             {
-                "patid": "P1",
+                "patid": 1,
                 "enr_start": date(2020, 1, 1),
                 "enr_end": date(2020, 6, 30),
                 "drugcov": "y",
                 "medcov": "y",
             },
             {
-                "patid": "P1",
+                "patid": 1,
                 "enr_start": date(2020, 8, 1),
                 "enr_end": date(2020, 12, 31),
                 "drugcov": "y",
                 "medcov": "y",
             },
             {
-                "patid": "P2",
+                "patid": 2,
                 "enr_start": date(2020, 3, 1),
                 "enr_end": date(2023, 12, 31),
                 "drugcov": "y",
@@ -281,14 +281,14 @@ class TestIntervalBridging:
         """Patient-year deduplication: multiple spans in same year count once."""
         rows = [
             {
-                "patid": "P1",
+                "patid": 1,
                 "enr_start": date(2020, 1, 1),
                 "enr_end": date(2020, 1, 31),
                 "drugcov": "y",
                 "medcov": "y",
             },
             {
-                "patid": "P1",
+                "patid": 1,
                 "enr_start": date(2020, 6, 1),
                 "enr_end": date(2020, 6, 30),
                 "drugcov": "y",

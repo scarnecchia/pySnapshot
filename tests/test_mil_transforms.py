@@ -11,6 +11,7 @@ pytestmark = pytest.mark.integration
 from pyspark.sql.types import (
     DateType,
     IntegerType,
+    LongType,
     StringType,
     StructField,
     StructType,
@@ -20,11 +21,11 @@ from scdm_snapshot_db.transforms import mil
 
 MIL_SCHEMA = StructType(
     [
-        StructField("mpatid", StringType(), True),
-        StructField("encounterid", StringType(), True),
-        StructField("cpatid", StringType(), True),
+        StructField("mpatid", LongType(), True),
+        StructField("encounterid", LongType(), True),
+        StructField("cpatid", LongType(), True),
         StructField("enctype", StringType(), True),
-        StructField("birth_type", StringType(), True),
+        StructField("birth_type", IntegerType(), True),
         StructField("age", IntegerType(), True),
         StructField("adate", DateType(), True),
     ]
@@ -41,41 +42,41 @@ class TestMILAgeCategories:
         deliveries = [
             # age 0 → 0-1 yrs
             {
-                "mpatid": "M01",
-                "encounterid": "E01",
-                "cpatid": "C01",
+                "mpatid": 1000001,
+                "encounterid": 1001,
+                "cpatid": 2000001,
                 "enctype": "D",
-                "birth_type": "V",
+                "birth_type": 1,
                 "age": 0,
                 "adate": date(2020, 1, 1),
             },
             # age 55 → 55+ yrs
             {
-                "mpatid": "M02",
-                "encounterid": "E02",
+                "mpatid": 1000002,
+                "encounterid": 1002,
                 "cpatid": None,
                 "enctype": "D",
-                "birth_type": "C",
+                "birth_type": 2,
                 "age": 55,
                 "adate": date(2020, 6, 1),
             },
             # age null → MISSING
             {
-                "mpatid": "M03",
-                "encounterid": "E03",
-                "cpatid": "C03",
+                "mpatid": 1000003,
+                "encounterid": 1003,
+                "cpatid": 2000003,
                 "enctype": "D",
-                "birth_type": "V",
+                "birth_type": 1,
                 "age": None,
                 "adate": date(2020, 3, 15),
             },
             # age -1 → NEGATIVE
             {
-                "mpatid": "M04",
-                "encounterid": "E04",
+                "mpatid": 1000004,
+                "encounterid": 1004,
                 "cpatid": None,
                 "enctype": "D",
-                "birth_type": "V",
+                "birth_type": 1,
                 "age": -1,
                 "adate": date(2020, 7, 1),
             },
@@ -94,20 +95,20 @@ class TestMILAgeCategories:
         """Ages below 10 and above 54 should produce valid categories."""
         deliveries = [
             {
-                "mpatid": "M01",
-                "encounterid": "E01",
-                "cpatid": "C01",
+                "mpatid": 1000001,
+                "encounterid": 1001,
+                "cpatid": 2000001,
                 "enctype": "D",
-                "birth_type": "V",
+                "birth_type": 1,
                 "age": 3,
                 "adate": date(2020, 1, 1),
             },
             {
-                "mpatid": "M02",
-                "encounterid": "E02",
+                "mpatid": 1000002,
+                "encounterid": 1002,
                 "cpatid": None,
                 "enctype": "D",
-                "birth_type": "V",
+                "birth_type": 1,
                 "age": 60,
                 "adate": date(2020, 1, 1),
             },
@@ -124,20 +125,20 @@ class TestMILGroupedResults:
         """Overall and four dimension groups are produced."""
         deliveries = [
             {
-                "mpatid": "M01",
-                "encounterid": "E01",
-                "cpatid": "C01",
+                "mpatid": 1000001,
+                "encounterid": 1001,
+                "cpatid": 2000001,
                 "enctype": "D",
-                "birth_type": "V",
+                "birth_type": 1,
                 "age": 25,
                 "adate": date(2020, 1, 1),
             },
             {
-                "mpatid": "M02",
-                "encounterid": "E02",
+                "mpatid": 1000002,
+                "encounterid": 1002,
                 "cpatid": None,
                 "enctype": "L",
-                "birth_type": "C",
+                "birth_type": 2,
                 "age": 30,
                 "adate": date(2021, 6, 1),
             },
@@ -155,20 +156,20 @@ class TestMILGroupedResults:
         """Same infant linked to same delivery multiple times counts once."""
         deliveries = [
             {
-                "mpatid": "M01",
-                "encounterid": "E01",
-                "cpatid": "C01",
+                "mpatid": 1000001,
+                "encounterid": 1001,
+                "cpatid": 2000001,
                 "enctype": "D",
-                "birth_type": "V",
+                "birth_type": 1,
                 "age": 25,
                 "adate": date(2020, 1, 1),
             },
             {
-                "mpatid": "M01",
-                "encounterid": "E01",
-                "cpatid": "C01",
+                "mpatid": 1000001,
+                "encounterid": 1001,
+                "cpatid": 2000001,
                 "enctype": "D",
-                "birth_type": "V",
+                "birth_type": 1,
                 "age": 25,
                 "adate": date(2020, 1, 1),
             },  # duplicate link
@@ -186,11 +187,11 @@ class TestMILSchemaAndPrecision:
         """Output schema has correct types and precision."""
         deliveries = [
             {
-                "mpatid": "M01",
-                "encounterid": "E01",
-                "cpatid": "C01",
+                "mpatid": 1000001,
+                "encounterid": 1001,
+                "cpatid": 2000001,
                 "enctype": "D",
-                "birth_type": "V",
+                "birth_type": 1,
                 "age": 25,
                 "adate": date(2020, 1, 1),
             },
@@ -232,20 +233,20 @@ class TestMILConflictDetection:
         """Conflicting delivery attributes are detected."""
         deliveries = [
             {
-                "mpatid": "M01",
-                "encounterid": "E01",
-                "cpatid": "C01",
+                "mpatid": 1000001,
+                "encounterid": 1001,
+                "cpatid": 2000001,
                 "enctype": "D",
-                "birth_type": "V",
+                "birth_type": 1,
                 "age": 25,
                 "adate": date(2020, 1, 1),
             },
             {
-                "mpatid": "M01",
-                "encounterid": "E01",
-                "cpatid": "C02",
+                "mpatid": 1000001,
+                "encounterid": 1001,
+                "cpatid": 2000002,
                 "enctype": "L",  # different enctype
-                "birth_type": "V",
+                "birth_type": 1,
                 "age": 25,
                 "adate": date(2020, 1, 1),
             },
@@ -258,20 +259,20 @@ class TestMILConflictDetection:
         """Repeated equal values are consistent (no conflict)."""
         deliveries = [
             {
-                "mpatid": "M01",
-                "encounterid": "E01",
-                "cpatid": "C01",
+                "mpatid": 1000001,
+                "encounterid": 1001,
+                "cpatid": 2000001,
                 "enctype": "D",
-                "birth_type": "V",
+                "birth_type": 1,
                 "age": 25,
                 "adate": date(2020, 1, 1),
             },
             {
-                "mpatid": "M01",
-                "encounterid": "E01",
-                "cpatid": "C02",
+                "mpatid": 1000001,
+                "encounterid": 1001,
+                "cpatid": 2000002,
                 "enctype": "D",
-                "birth_type": "V",
+                "birth_type": 1,
                 "age": 25,
                 "adate": date(2020, 1, 1),
             },
@@ -284,18 +285,18 @@ class TestMILConflictDetection:
         """All-null values are consistent (no conflict)."""
         deliveries = [
             {
-                "mpatid": "M01",
-                "encounterid": "E01",
-                "cpatid": "C01",
+                "mpatid": 1000001,
+                "encounterid": 1001,
+                "cpatid": 2000001,
                 "enctype": None,
                 "birth_type": None,
                 "age": None,
                 "adate": None,
             },
             {
-                "mpatid": "M01",
-                "encounterid": "E01",
-                "cpatid": "C02",
+                "mpatid": 1000001,
+                "encounterid": 1001,
+                "cpatid": 2000002,
                 "enctype": None,
                 "birth_type": None,
                 "age": None,
